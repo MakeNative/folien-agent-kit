@@ -26,6 +26,9 @@ def main():
     if "/pruefberichte/" in teile or Path(teile).name.startswith("SPEZIFIKATION"):
         # Prüfberichte und Spezifikationen unter decks/ sind keine Decks.
         sys.exit(0)
+    if "/.claude/" in teile:
+        # Agent-Memory und andere Metadateien unter decks/ sind keine Decks.
+        sys.exit(0)
     if "/praesentationen/decks/" not in teile and not teile.startswith("praesentationen/decks/"):
         sys.exit(0)
     pfad = Path(pfad_roh)

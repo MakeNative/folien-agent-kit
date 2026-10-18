@@ -77,6 +77,35 @@ ERWARTUNGEN = [
      lambda r: "F-06" in r["duenn"].stdout and "zu dünn" in r["duenn"].stdout),
     ("F-06: Prosa-Minuten zählen nicht mit",
      lambda r: "F-06" not in r["prosa"].stdout),
+    # Grammatik v2 (07.10.2026)
+    ("v2 gut: Exit 0, kein Befund", lambda r: r["v2gut"].returncode == 0),
+    ("v2 gut: Typ-Zeilen zählen nicht als Text",
+     lambda r: "F-09" not in r["v2gut"].stdout),
+    ("v2 schlecht: F-08 fehlender Typ", lambda r: "F-08" in r["v2schlecht"].stdout),
+    ("v2 schlecht: F-09 Anker-Budget", lambda r: "F-09" in r["v2schlecht"].stdout),
+    ("v2 schlecht: F-10 Ein-Wort-Titel", lambda r: "F-10" in r["v2schlecht"].stdout),
+    ("v2 schlecht: F-11 Listenregel", lambda r: "F-11" in r["v2schlecht"].stdout),
+    ("v2 schlecht: F-12 Rhythmus", lambda r: "F-12" in r["v2schlecht"].stdout),
+    ("v2 schlecht: F-13 Input-Zeile fehlt", lambda r: "F-13" in r["v2schlecht"].stdout),
+    ("v2 schlecht: F-14 Pflicht-Slots", lambda r: "F-14" in r["v2schlecht"].stdout),
+    ("v2 schlecht: F-15 Icon nicht im Lexikon",
+     lambda r: "F-15" in r["v2schlecht"].stdout),
+    ("v2 schlecht: F-16 Folklore-Zahl", lambda r: "F-16" in r["v2schlecht"].stdout),
+    ("v2: alte F-02-Pauschale greift nicht mehr",
+     lambda r: "F-02" not in r["v2schlecht"].stdout),
+    # Grammatik v2.1 (07.10.2026): Begriff, Kernsatz, Notiz-Format
+    ("v2 gut: B-Folie und Begriff-Reihenfolge sauber",
+     lambda r: "F-17" not in r["v2gut"].stdout),
+    ("v2 gut: Kernsatz-Kette geschlossen",
+     lambda r: "F-18" not in r["v2gut"].stdout),
+    ("v2 gut: Notiz-Bloecke vollstaendig",
+     lambda r: "F-19" not in r["v2gut"].stdout),
+    ("v2 schlecht: F-17 Begriff vor seiner B-Folie",
+     lambda r: "F-17" in r["v2schlecht"].stdout),
+    ("v2 schlecht: F-18 Kernsatz-Kopf fehlt",
+     lambda r: "F-18" in r["v2schlecht"].stdout),
+    ("v2 schlecht: F-19 Notiz-Bloecke fehlen",
+     lambda r: "F-19" in r["v2schlecht"].stdout),
 ]
 
 # Vier Decks des Programms lagen still unter ihrem Zielwert, weil F-06 nur
@@ -115,6 +144,232 @@ Regel: Etwas gilt.
 - Alle Belege im Handout.
 """
 
+
+
+# Grammatik v2 (07.10.2026): typbasierte Budgets, Rhythmus, Pflicht-Slots.
+V2GUT = """# Testdeck v2
+Budget: 12 Folien
+Leinwandzeit: 60 min
+Input: 30 min
+Grammatik: v2
+Kernsatz: Die KI raet das naechste Wort
+Peak: Folie 4
+
+## Folie 1: Mein teuerster Fehler passierte im Auto-Modus (~2 min)
+
+Typ: STORY
+
+[Screenshot: Terminal mit geloeschter Datei]
+
+KERN: Die eine Botschaft dieser Folie in einem Satz.
+
+SAGEN: Hier steht der ausgeschriebene Leitfaden fuer den Trainer, in ganzen Gedanken und mit genug Substanz, dass jemand ohne Modul-Lektuere die Folie halten kann. Er erklaert die Sache in mehreren Saetzen, nennt das Beispiel, nimmt den erwartbaren Einwand aus dem Raum vorweg und beantwortet ihn, sagt ausserdem, was hier bewusst nicht gesagt wird, und schliesst mit dem Hinweis, worauf der naechste Schritt aufbaut, damit der rote Faden der Stunde nicht abreisst und kein Teil improvisiert werden muss.
+
+UEBERGANG: Und genau daran schliesst die naechste Folie an.
+
+## Folie 2: Was weiss die KI morgen noch von heute? (~2 min)
+
+Typ: POLL
+
+- A: Alles aus unserem Gespraech von heute
+- B: Nur dieses eine Gespraech
+- C: Gar nichts mehr
+
+KERN: Die eine Botschaft dieser Folie in einem Satz.
+
+SAGEN: Hier steht der ausgeschriebene Leitfaden fuer den Trainer, in ganzen Gedanken und mit genug Substanz, dass jemand ohne Modul-Lektuere die Folie halten kann. Er erklaert die Sache in mehreren Saetzen, nennt das Beispiel, nimmt den erwartbaren Einwand aus dem Raum vorweg und beantwortet ihn, sagt ausserdem, was hier bewusst nicht gesagt wird, und schliesst mit dem Hinweis, worauf der naechste Schritt aufbaut, damit der rote Faden der Stunde nicht abreisst und kein Teil improvisiert werden muss.
+
+TUN: Handgriff zeigen, Abfrage machen, Requisit bereithalten.
+
+UEBERGANG: Und genau daran schliesst die naechste Folie an.
+
+## Folie 3: Sitzung (~3 min)
+
+Typ: B
+Icon: bot
+
+Sitzung
+Ein zusammenhaengendes Arbeitsgespraech von Start bis Ende.
+
+KERN: Die eine Botschaft dieser Folie in einem Satz.
+
+SAGEN: Hier steht der ausgeschriebene Leitfaden fuer den Trainer, in ganzen Gedanken und mit genug Substanz, dass jemand ohne Modul-Lektuere die Folie halten kann. Er erklaert die Sache in mehreren Saetzen, nennt das Beispiel, nimmt den erwartbaren Einwand aus dem Raum vorweg und beantwortet ihn, sagt ausserdem, was hier bewusst nicht gesagt wird, und schliesst mit dem Hinweis, worauf der naechste Schritt aufbaut, damit der rote Faden der Stunde nicht abreisst und kein Teil improvisiert werden muss.
+
+UEBERGANG: Und genau daran schliesst die naechste Folie an.
+
+## Folie 4: Die KI raet das naechste Wort (~2 min)
+
+Typ: A
+Icon: bot
+
+Wort fuer Wort, ohne Datenbank.
+
+KERN: Die eine Botschaft dieser Folie in einem Satz.
+
+SAGEN: Hier steht der ausgeschriebene Leitfaden fuer den Trainer, in ganzen Gedanken und mit genug Substanz, dass jemand ohne Modul-Lektuere die Folie halten kann. Er erklaert die Sache in mehreren Saetzen, nennt das Beispiel, nimmt den erwartbaren Einwand aus dem Raum vorweg und beantwortet ihn, sagt ausserdem, was hier bewusst nicht gesagt wird, und schliesst mit dem Hinweis, worauf der naechste Schritt aufbaut, damit der rote Faden der Stunde nicht abreisst und kein Teil improvisiert werden muss.
+
+UEBERGANG: Und genau daran schliesst die naechste Folie an.
+
+## Folie 5: Drei Dinge entscheiden ueber die Antwort (~5 min)
+
+Typ: K
+
+- Dein Auftrag im Gespraech
+- Der bisherige Verlauf
+- Die mitgegebenen Dateien
+
+KERN: Die eine Botschaft dieser Folie in einem Satz.
+
+SAGEN: Hier steht der ausgeschriebene Leitfaden fuer den Trainer, in ganzen Gedanken und mit genug Substanz, dass jemand ohne Modul-Lektuere die Folie halten kann. Er erklaert die Sache in mehreren Saetzen, nennt das Beispiel, nimmt den erwartbaren Einwand aus dem Raum vorweg und beantwortet ihn, sagt ausserdem, was hier bewusst nicht gesagt wird, und schliesst mit dem Hinweis, worauf der naechste Schritt aufbaut, damit der rote Faden der Stunde nicht abreisst und kein Teil improvisiert werden muss.
+
+UEBERGANG: Und genau daran schliesst die naechste Folie an.
+
+## Folie 6: So sieht eine Sitzung wirklich aus (~9 min)
+
+Typ: D
+
+[Screenshot: Werkzeug mit laufendem Befehl]
+
+KERN: Die eine Botschaft dieser Folie in einem Satz.
+
+SAGEN: Hier steht der ausgeschriebene Leitfaden fuer den Trainer, in ganzen Gedanken und mit genug Substanz, dass jemand ohne Modul-Lektuere die Folie halten kann. Er erklaert die Sache in mehreren Saetzen, nennt das Beispiel, nimmt den erwartbaren Einwand aus dem Raum vorweg und beantwortet ihn, sagt ausserdem, was hier bewusst nicht gesagt wird, und schliesst mit dem Hinweis, worauf der naechste Schritt aufbaut, damit der rote Faden der Stunde nicht abreisst und kein Teil improvisiert werden muss.
+
+TUN: Handgriff zeigen, Abfrage machen, Requisit bereithalten.
+
+UEBERGANG: Und genau daran schliesst die naechste Folie an.
+
+## Folie 7: Zwei Regeln sparen dir die meisten Fehler (~5 min)
+
+Typ: K
+
+- Klein anfangen, frueh pruefen
+- Nie ungelesen uebernehmen
+
+KERN: Die eine Botschaft dieser Folie in einem Satz.
+
+SAGEN: Hier steht der ausgeschriebene Leitfaden fuer den Trainer, in ganzen Gedanken und mit genug Substanz, dass jemand ohne Modul-Lektuere die Folie halten kann. Er erklaert die Sache in mehreren Saetzen, nennt das Beispiel, nimmt den erwartbaren Einwand aus dem Raum vorweg und beantwortet ihn, sagt ausserdem, was hier bewusst nicht gesagt wird, und schliesst mit dem Hinweis, worauf der naechste Schritt aufbaut, damit der rote Faden der Stunde nicht abreisst und kein Teil improvisiert werden muss.
+
+UEBERGANG: Und genau daran schliesst die naechste Folie an.
+
+## Folie 8: Welche Aussage stimmt wirklich? (~3 min)
+
+Typ: QUIZ
+
+- A: Die KI merkt sich alles
+- B: Der Kontext endet mit der Sitzung
+- C: Dateien verschwinden beim Schliessen
+
+KERN: Die eine Botschaft dieser Folie in einem Satz.
+
+SAGEN: Hier steht der ausgeschriebene Leitfaden fuer den Trainer, in ganzen Gedanken und mit genug Substanz, dass jemand ohne Modul-Lektuere die Folie halten kann. Er erklaert die Sache in mehreren Saetzen, nennt das Beispiel, nimmt den erwartbaren Einwand aus dem Raum vorweg und beantwortet ihn, sagt ausserdem, was hier bewusst nicht gesagt wird, und schliesst mit dem Hinweis, worauf der naechste Schritt aufbaut, damit der rote Faden der Stunde nicht abreisst und kein Teil improvisiert werden muss.
+
+TUN: Handgriff zeigen, Abfrage machen, Requisit bereithalten.
+
+UEBERGANG: Und genau daran schliesst die naechste Folie an.
+
+## Folie 9: Gleich siehst du einen echten Lauf (~2 min)
+
+Typ: PRIMING
+
+Achte auf die Nachfrage.
+Ignoriere die Farben.
+Erfolg: Die Datei ist da.
+
+KERN: Die eine Botschaft dieser Folie in einem Satz.
+
+SAGEN: Hier steht der ausgeschriebene Leitfaden fuer den Trainer, in ganzen Gedanken und mit genug Substanz, dass jemand ohne Modul-Lektuere die Folie halten kann. Er erklaert die Sache in mehreren Saetzen, nennt das Beispiel, nimmt den erwartbaren Einwand aus dem Raum vorweg und beantwortet ihn, sagt ausserdem, was hier bewusst nicht gesagt wird, und schliesst mit dem Hinweis, worauf der naechste Schritt aufbaut, damit der rote Faden der Stunde nicht abreisst und kein Teil improvisiert werden muss.
+
+TUN: Handgriff zeigen, Abfrage machen, Requisit bereithalten.
+
+UEBERGANG: Und genau daran schliesst die naechste Folie an.
+
+## Folie 10: Jetzt baust du deine erste Sitzung (~22 min)
+
+Typ: UEBUNG
+
+Ziel: Eine Sitzung mit Nachfrage.
+Zeit: 20 Minuten.
+Start: claude im Projektordner.
+Fertig, wenn die Datei liegt.
+Schneller fertig? Zweite Datei.
+Hilfe: Hand heben.
+
+KERN: Die eine Botschaft dieser Folie in einem Satz.
+
+SAGEN: Hier steht der ausgeschriebene Leitfaden fuer den Trainer, in ganzen Gedanken und mit genug Substanz, dass jemand ohne Modul-Lektuere die Folie halten kann. Er erklaert die Sache in mehreren Saetzen, nennt das Beispiel, nimmt den erwartbaren Einwand aus dem Raum vorweg und beantwortet ihn, sagt ausserdem, was hier bewusst nicht gesagt wird, und schliesst mit dem Hinweis, worauf der naechste Schritt aufbaut, damit der rote Faden der Stunde nicht abreisst und kein Teil improvisiert werden muss.
+
+TUN: Handgriff zeigen, Abfrage machen, Requisit bereithalten.
+
+UEBERGANG: Und genau daran schliesst die naechste Folie an.
+
+## Folie 11: Drei Fragen zeigen dir, was sitzt (~3 min)
+
+Typ: QUIZ
+
+- A: Was endet mit der Sitzung?
+- B: Was bleibt dauerhaft?
+- C: Was kostet ein Durchgang?
+
+KERN: Die eine Botschaft dieser Folie in einem Satz.
+
+SAGEN: Hier steht der ausgeschriebene Leitfaden fuer den Trainer, in ganzen Gedanken und mit genug Substanz, dass jemand ohne Modul-Lektuere die Folie halten kann. Er erklaert die Sache in mehreren Saetzen, nennt das Beispiel, nimmt den erwartbaren Einwand aus dem Raum vorweg und beantwortet ihn, sagt ausserdem, was hier bewusst nicht gesagt wird, und schliesst mit dem Hinweis, worauf der naechste Schritt aufbaut, damit der rote Faden der Stunde nicht abreisst und kein Teil improvisiert werden muss.
+
+TUN: Handgriff zeigen, Abfrage machen, Requisit bereithalten.
+
+UEBERGANG: Und genau daran schliesst die naechste Folie an.
+
+## Folie 12: Nimm diese drei Anker mit nach Hause (~2 min)
+
+Typ: ABSCHLUSS
+
+Die KI raet das naechste Wort.
+Eine Sache, die sass.
+Eine Sache, die zu schnell war.
+
+KERN: Die eine Botschaft dieser Folie in einem Satz.
+
+SAGEN: Hier steht der ausgeschriebene Leitfaden fuer den Trainer, in ganzen Gedanken und mit genug Substanz, dass jemand ohne Modul-Lektuere die Folie halten kann. Er erklaert die Sache in mehreren Saetzen, nennt das Beispiel, nimmt den erwartbaren Einwand aus dem Raum vorweg und beantwortet ihn, sagt ausserdem, was hier bewusst nicht gesagt wird, und schliesst mit dem Hinweis, worauf der naechste Schritt aufbaut, damit der rote Faden der Stunde nicht abreisst und kein Teil improvisiert werden muss.
+
+UEBERGANG: Und genau daran schliesst die naechste Folie an.
+"""
+
+V2SCHLECHT = """# Testdeck v2 schlecht
+Budget: 3 Folien
+Leinwandzeit: 60 min
+Grammatik: v2
+
+## Folie 1: Zusammenfassung (~10 min)
+
+Stories werden 22x besser erinnert, sagt man.
+
+## Folie 2: Diese eine Folie erklärt wirklich restlos alles über den kompletten Kontext (~10 min)
+
+Typ: A
+
+Hier stehen nun deutlich mehr als fünfzehn sichtbare Wörter, damit das
+Budget der Anker-Folie in diesem Negativtest zuverlässig reißt.
+
+## Folie 3: Noch ein Anker direkt danach bricht den Rhythmus (~10 min)
+
+Typ: A
+Icon: unicorn
+
+Kurz.
+
+## Folie 4: Eine Liste mit einer viel zu langen Zeile (~10 min)
+
+Typ: K
+
+- Diese eine Stichpunktzeile trägt neun Wörter und reißt
+- Das Kontextfenster taucht hier vor seiner Begriff-Folie auf
+
+## Folie 5: Dieser Begriff kommt sichtbar viel zu spät (~5 min)
+
+Typ: B
+
+Kontextfenster
+Die Textmenge, die ein Modell gleichzeitig sehen kann.
+"""
 
 
 PAPIER_GATE = HIER / "papier_pruefen.py"
@@ -180,11 +435,18 @@ def main():
         (d / "schlecht.md").write_text(SCHLECHT, encoding="utf-8")
         (d / "duenn.md").write_text(DUENN, encoding="utf-8")
         (d / "prosa.md").write_text(PROSA, encoding="utf-8")
+        (d / "v2gut.md").write_text(V2GUT, encoding="utf-8")
+        (d / "v2schlecht.md").write_text(V2SCHLECHT, encoding="utf-8")
         (d / "SPEZIFIKATION-gut.md").write_text(SPEZ, encoding="utf-8")
+        # Mini-Lexikon, damit F-15 gegen eine echte Liste prüft.
+        (d / "pptx").mkdir()
+        (d / "pptx" / "ICON-LEXIKON.md").write_text(
+            "| `bot` | Agent | KI |\n", encoding="utf-8")
         r = {
             name: subprocess.run([sys.executable, str(GATE), str(d / f"{name}.md")],
                                  capture_output=True, text=True)
-            for name in ("gut", "schlecht", "duenn", "prosa")
+            for name in ("gut", "schlecht", "duenn", "prosa",
+                         "v2gut", "v2schlecht")
         }
     ok = 0
     for name, test in ERWARTUNGEN:

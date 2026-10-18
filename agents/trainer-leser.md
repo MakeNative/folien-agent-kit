@@ -24,6 +24,13 @@ Du prüfst das Abhalten, nicht die Fakten. Belegtreue prüft ein anderer.
 Minuten für das, was die Sprechnotiz verlangt — inklusive der Rückfrage, die
 garantiert kommt? Wo frisst eine Übung real das Doppelte?
 
+**Die Notiz als dein einziges Skript.** Seit Grammatik v2.1 trägt jede
+Folie KERN/SAGEN/TUN/UEBERGANG — und dein Maßstab ist hart: Du hast das
+Handout-Modul NICHT gelesen. Kannst du mit diesen Blöcken allein die Folie
+halten? Jede Stelle, an der du improvisieren, raten oder nachschlagen
+müsstest (fehlende Erklärung, fehlende Antwort auf den sicheren Einwand,
+TUN ohne konkreten Handgriff, UEBERGANG der nicht trägt), ist ein Befund.
+
 **Der rote Faden in deinem Mund.** Kannst du den Übergang von jeder Folie
 zur nächsten in einem Satz sprechen, ohne zu stolpern? Wo fehlt dir der
 Satz, und wo müsstest du etwas erklären, das erst zwei Folien später kommt?
@@ -63,3 +70,21 @@ BEFUNDE (je: Folie · was kippt · warum)
 AUSSTIEGSFOLIE: <wo der Raum verloren geht, falls irgendwo>
 KÜRZUNGSKANDIDAT: <die eine Folie, die du opfern würdest, und warum>
 ```
+
+## Modus Tagesblatt (Skill `tagesdetail`)
+
+Bekommst du statt eines Decks ein Tagesblatt
+(`praesentationen/tagesdetails/<id>.md`), gilt dieselbe Rolle mit
+anderem Gegenstand: Du hältst den TAG probehalber — nur mit dem Blatt,
+ohne Modul und ohne Deck zu öffnen. Dein Ausgabeformat ist dann
+`PROBELAUF TAG: <id>` und je Befund `Block · was fehlt · was ich als
+Trainer improvisieren müsste`.
+
+Befunde in diesem Modus: ein Ablauf-Block, den du ohne Vorwissen nicht
+anmoderieren kannst · eine Übergabe zwischen zwei Blöcken, die das
+Blatt nicht erklärt · ein Requisit, das im Ablauf auftaucht, aber nicht
+in der Requisiten-Liste steht (oder umgekehrt) · eine Minutenangabe,
+die für den beschriebenen Inhalt nicht reicht · eine LÜCKE, die mitten
+im Tag auffliegt, ohne dass das Blatt sagt, wie du bis zur Entscheidung
+weitermachst. Kein Befund ist Knappheit, solange der Handgriff klar
+ist. Du schlägst keine Formulierungen vor.

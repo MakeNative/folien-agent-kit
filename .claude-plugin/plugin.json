@@ -1,7 +1,9 @@
 {
   "name": "folien-kit",
-  "description": "Agenten-Pipeline für Dünn-Decks aus belegten Handouts. Baut Leinwand-Foliensätze mit harten Budgets (Folien, Wörter, Leinwandzeit), erzwingt Beispiel-vor-Regel und belegfreie Leinwand per Hook, prüft über Belegkette, Trainer-Probelauf und Publikums-Lesung. Inhaltsquelle sind die Handout-Module eines Dokumentprojekts.",
-  "version": "0.1.0",
-  "author": { "name": "ceichmueller" },
+  "description": "Agenten-Pipeline für Dünn-Decks aus belegten Handouts. Baut Leinwand-Foliensätze mit harten Budgets (Folien, Wörter, Leinwandzeit), erzwingt Beispiel-vor-Regel und belegfreie Leinwand per Hook, prüft über Belegkette, Trainer-Probelauf und Publikums-Lesung. Inhaltsquelle sind die Handout-Module eines Dokumentprojekts. Die Asset-Straße (Skill assets) plant, erzeugt und prüft Bild-/Clip-/Foto-Assets je Deck (asset-planner/-generator/-validator, AS-Regeln, Gate assets_pruefen, Hook guard-assets); der Builder legt freigegebene Assets automatisch über die Platzhalter. Dazu die Tagesdetail-Straße (Skill tagesdetail: tagesdetail-writer/board-treue-pruefer, Gate tagesdetail_pruefen, Hook guard-tagesdetail) für Durchführungsblätter je Programmtag und die Eval-Straße (Skill eval-formulare: formular-bauer/formular-validator, Gate formular_pruefen mit Board-Zitatabgleich und Baulog-Regenerationsschutz, Hook guard-formular).",
+  "version": "0.3.0",
+  "author": {
+    "name": "ceichmueller"
+  },
   "license": "MIT"
 }
