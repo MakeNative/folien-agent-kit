@@ -1,6 +1,6 @@
 {
   "name": "folien-kit-marketplace",
-  "owner": { "name": "ceichmueller" },
+  "owner": { "name": "MakeNative" },
   "plugins": [
     {
       "name": "folien-kit",
