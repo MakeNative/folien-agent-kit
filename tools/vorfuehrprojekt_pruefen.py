@@ -137,6 +137,54 @@ def main() -> int:
             befunde.append(f"{ZWEITE_DOMAENE}: keine Regeldatei in einem "
                            f"Unterordner — die Pointe von T17 F12 fehlt")
 
+    # 7b Abdeckung der projektabhaengigen Bedarfe
+    #     Je Bedarf eine Datei oder Marke, die beweist, dass das Projekt
+    #     ihn traegt. Ohne diese Tabelle laesst sich "das Projekt ist
+    #     fertig" nur behaupten, nicht messen.
+    ABDECKUNG = {
+        ("S2-kontext", 7): "protokolle/zustellung.log",
+        ("S2-kontext", 8): "protokolle/zustellung.log",
+        ("S2-kontext", 14): "protokolle/zustellung.log",
+        ("S3-datenzugriff", 15): "werkzeug/ticketspur-server.ts",
+        ("T0-grundlagen", 4): "VERSIONEN.md",
+        ("T0-grundlagen", 5): "src/services/orderNotifier.ts",
+        ("T0-grundlagen", 11): "bin/test",
+        ("T1-kickoff", 9): "src/services/queueOverview.ts",
+        ("T1-kickoff", 14): "src/services/orderNotifier.ts",
+        ("T1-kickoff", 18): "vorgaenge/offen.md",
+        ("T12-parallel", 11): "laeufe/deliveryQuota-endzustand.ts",
+        ("T12-parallel", 24): "werkzeug/pruefe-zieldatei.ts",
+        ("T13-autonomie", 12): "protokolle/lauf-verweigert.log",
+        ("T13-autonomie", 16): "werkzeug/pruefe-schreibziel.ts",
+        ("T13-autonomie", 24): "protokolle/laufliste.txt",
+        ("T13-autonomie", 27): "werkzeug/mod-guard/plugin.json",
+        ("T17-system", 11): "zustell-doku/CLAUDE.md",
+        ("T17b-remote", 6): "laeufe/remote-uebersicht.txt",
+        ("T20-abschluss", 13): "abnahmen/notizen.md",
+        ("T3-anatomie", 10): "werkzeug/pruefe-schreibziel.ts",
+        ("T3-anatomie", 14): "src/services/orderNotifier.ts",
+        ("T3-anatomie", 16): "src/services/queueOverview.ts",
+        ("T4-pipelines", 16): "berichte/wegwerf.txt",
+        ("T7-evaluieren", 7): "laeufe/lauf-a-bericht.md",
+        ("T7-evaluieren", 12): "src/services/addressCheck.ts",
+    }
+    offen = []
+    for (deck, nr), pfad in sorted(ABDECKUNG.items()):
+        geprueft += 1
+        if not (projekt / pfad).exists():
+            offen.append(f"{deck} F{nr}: {pfad} fehlt")
+    befunde += offen
+
+    # 7c Die zwei vorbereiteten Diffs (T3 F16, T7 F12) liegen als Zweig
+    geprueft += 1
+    r = subprocess.run(["git", "-C", str(projekt), "branch", "--format=%(refname:short)"],
+                       capture_output=True, text=True)
+    zweige = set(r.stdout.split())
+    for z in ("vorlauf/queue-uebersicht", "vorlauf/adresspruefung"):
+        if z not in zweige:
+            befunde.append(f"Zweig {z} fehlt — ohne ihn gibt es keinen "
+                           f"Aenderungsvergleich zum Pruefen")
+
     # 8 Schutz-Hook
     s = projekt / ".claude" / "settings.json"
     geprueft += 1
