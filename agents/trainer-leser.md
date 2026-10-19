@@ -74,7 +74,7 @@ KÜRZUNGSKANDIDAT: <die eine Folie, die du opfern würdest, und warum>
 ## Modus Tagesblatt (Skill `tagesdetail`)
 
 Bekommst du statt eines Decks ein Tagesblatt
-(`praesentationen/tagesdetails/<id>.md`), gilt dieselbe Rolle mit
+(`praesentationen/sessions/<TAG>/TAGESBLATT.md`), gilt dieselbe Rolle mit
 anderem Gegenstand: Du hältst den TAG probehalber — nur mit dem Blatt,
 ohne Modul und ohne Deck zu öffnen. Dein Ausgabeformat ist dann
 `PROBELAUF TAG: <id>` und je Befund `Block · was fehlt · was ich als

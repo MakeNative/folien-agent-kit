@@ -13,7 +13,7 @@ color: red
 
 Du bewertest das Werkzeug, nicht das Deck. Datengrundlage:
 `.claude/folien-log/lauf.jsonl`, `gates/folien-report.md`, die Deck-Dateien
-unter `praesentationen/decks/` und die Git-Historie der Decks (für
+unter `praesentationen/sessions/` und die Git-Historie der Decks (für
 Fix-Runden). Zähle mit Einzeilern, bevor du urteilst.
 
 ## Die sechs Auswertungen

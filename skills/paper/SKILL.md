@@ -11,16 +11,16 @@ das Deck ist abgenommen.
    `grafik-designer` mit Skizze + Folie + Handout-Ausschnitt. Ergebnis:
    .mmd-Dateien unter praesentationen/grafiken/.
 2. **Writer.** Spawn `papier-writer` mit Deck, Handout-Modul und den
-   Grafik-Pfaden. Ziel: praesentationen/papers/P-<name>.md, Wortbudget 900.
+   Grafik-Pfaden. Ziel: praesentationen/sessions/<TAG>/P-<TAG>.md, Wortbudget 900.
 3. **Gate.** `python3 "${CLAUDE_PLUGIN_ROOT}/tools/papier_pruefen.py"
-   praesentationen/papers/P-<name>.md` — Befunde als Fix-Auftrag zurück,
+   praesentationen/sessions/<TAG>/P-<TAG>.md` — Befunde als Fix-Auftrag zurück,
    maximal zwei Runden.
 4. **Prüfer, parallel:** `belegkette-pruefer` (Paper → Handout → Claim; die
    Vertiefungs-Verweise sind die Kette) und `publikum-entwickler` (liest NUR
    das Paper: findet er in 60 Sekunden, wie man X tut?).
 5. **Entscheiden, abnehmen, protokollieren** wie in der deck-Skill
    (pruefergebnis je Prüfer, Berichte nach
-   praesentationen/decks/pruefberichte/, abnahme-Ereignis mit wortzahl).
+   praesentationen/pruefberichte/, abnahme-Ereignis mit wortzahl).
 
 Memory: nur protokoll-belegte Handwerksregeln für papier-writer und
 grafik-designer; publikum bleibt leer (FP-03).

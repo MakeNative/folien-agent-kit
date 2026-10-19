@@ -11,14 +11,14 @@ Deck in Bewegung sind Wegwerfarbeit. Freigabe-Wahrheit: AUSSCHLIESSLICH
 nie einen Freigabe-Status.
 
 1. **Planner.** Spawn `asset-planner` mit dem Deck. Ergebnis:
-   `praesentationen/pptx/assets/<deck>/ASSET-PLAN.md` + gepflegtes
+   `praesentationen/sessions/<TAG>/assets/ASSET-PLAN.md` + gepflegtes
    `FIKTIV-REGISTER.md` (Register ZUERST — Hook-Reihenfolge). Meldet
    der Planner Folien mit mehr als einer Marke (AS-07), ist das ein
    Deck-Fix VOR allem Weiteren. Offene Programm-Entscheidungen
    (Eigentümer für Route offen, Fiktivnamen nahe an realen Produkten)
    fragst du im Chat, bevor es weitergeht.
 2. **Gate.** `python3 "${CLAUDE_PLUGIN_ROOT}/tools/assets_pruefen.py"
-   praesentationen/decks/<deck>.md` — Befunde als Fix-Auftrag zurück an
+   praesentationen/sessions/<TAG>/<deck>.md` — Befunde als Fix-Auftrag zurück an
    den Planner, maximal zwei Runden. (Der Hook fährt dasselbe Gate bei
    jedem Schreiben von Plan/Ledger/Freigabe; das Gate loggt sich
    selbst ins Laufprotokoll.)
@@ -33,7 +33,7 @@ nie einen Freigabe-Status.
 6. **Validator.** Spawn `asset-validator` (getrennte Instanz, liest
    Plan + Dateien + Deck; schreibt FREIGABE.md im strikten Format mit
    Stand-Datum). Leg seinen Bericht als Datei ab:
-   `praesentationen/decks/pruefberichte/<deck>-asset-validator.md`
+   `praesentationen/pruefberichte/<deck>-asset-validator.md`
    (Pilot-Lektion aus `deck`: unabgelegte Befunde sind verlorene
    Befunde). Abgelehnte Dateien ⇒ EINE gebündelte Fixrunde an den
    Generator (per SendMessage, nummerierte Befunde); der Generator
@@ -45,7 +45,7 @@ nie einen Freigabe-Status.
 7. **Gate** final — muss still sein.
 8. **Overlay-Build.** Deck neu bauen
    (`.venv-pptx/bin/python praesentationen/pptx/bau_deck.py
-   praesentationen/decks/<deck>.md praesentationen/pptx/<deck>.pptx
+   praesentationen/sessions/<TAG>/<deck>.md praesentationen/sessions/<TAG>/<deck>.pptx
    --pruefen`) — der Builder legt NUR Dateien mit gültiger
    FREIGABE-Zeile über die Platzhalter; `offen`-Blöcke behalten ihre
    BILD-FOLGT-Fläche (gewollt). Liefert `--pruefen` Befunde, gehen
@@ -55,7 +55,7 @@ nie einen Freigabe-Status.
    per Read ansehen.
 9. **Deck-Fix nach Freigabe** (Wiederholungslauf): Ändert sich ein
    Deck nach erteilten Freigaben, rendert der Generator die
-   betroffenen mocks/clips aus dem bestehenden `_projekte/<deck>`-
+   betroffenen mocks/clips aus dem bestehenden `sessions/<TAG>/assets/quellen`-
    Projekt neu (neue Ledger-Zeile ⇒ Freigabe verfällt), dann Schritt 6
    bis 8. Fotos bleiben unberührt, solange ihr Block unverändert ist.
 10. **Protokoll.** Je Agentenlauf ein `agentenlauf`-Ereignis MIT Token

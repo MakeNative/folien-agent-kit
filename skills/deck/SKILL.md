@@ -7,7 +7,7 @@ argument-hint: "<deck-name oder Pfad zur Spezifikation>"
 Du orchestrierst, du baust nicht selbst (FP-01, FP-02).
 
 1. **Spezifikation.** Liegt keine vor, schreib sie zuerst nach
-   praesentationen/decks/SPEZIFIKATION-<name>.md: Session und Board-Titel,
+   praesentationen/sessions/<TAG>/SPEZIFIKATION-<TAG>.md: Session und Board-Titel,
    Budget (F-01-Richtwert), Leinwandzeit, Handout-Modul, die 5–8 Punkte, die
    die Leinwand tragen MUSS — jede als maschinenlesbare Zeile:
    `MUSS: <schlagwort> — Handout: <Modul> F<n> — <n> min`.
@@ -21,13 +21,13 @@ Du orchestrierst, du baust nicht selbst (FP-01, FP-02).
    fehlt.
 2. **Writer.** Spawn `folien-writer` mit Spezifikation und Handout-Modul.
 3. **Gate.** `python3 "${CLAUDE_PLUGIN_ROOT}/tools/folien_pruefen.py"
-   praesentationen/decks/<name>.md` — Befunde gehen als Fix-Auftrag an den
+   praesentationen/sessions/<TAG>/<name>.md` — Befunde gehen als Fix-Auftrag an den
    Writer zurück, maximal zwei Runden; danach liegt das Problem in der
    Spezifikation.
 4. **Prüfer, parallel:** `belegkette-pruefer`, `trainer-leser`,
    `publikum-entwickler` — je mit dem Deck (Publikum ohne Handout!).
 5. **Entscheiden.** Leg zuerst jeden Prüferbericht als Datei ab
-   (praesentationen/decks/pruefberichte/<deck>-<rolle>.md) — 46 erzeugte und
+   (praesentationen/pruefberichte/<deck>-<rolle>.md) — 46 erzeugte und
    0 lesbare Befunde waren die teuerste Protokolllücke des Pilotlaufs. Dann
    sortierst du die Befunde (behebbar jetzt / Programm-Entscheidung /
    verworfen mit Grund), beauftragst den Writer mit der Fix-Liste, fährst

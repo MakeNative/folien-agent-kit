@@ -24,7 +24,7 @@ am Format.
    du liest NICHT im Figma.
 2. Das Modul des Tages (`praesentationen/module/<id>*.md`) — Inhalte,
    Übungen, Zeitmodelle.
-3. Das Deck des Tages (`praesentationen/decks/<id>*.md`) — Folien-
+3. Das Deck des Tages (`praesentationen/sessions/<id>/<id>*.md`) — Folien-
    Minuten, Demo-Regie, Requisiten (auch `pptx/BILDLISTE.md`,
    Abschnitt Requisiten).
 
@@ -39,7 +39,7 @@ gegen diese Datei). Den Wortlaut der Entscheidung zitierst du nur, wenn
 er dort steht; eine Begründung dazuzudichten ist derselbe Fehler wie
 eine erfundene Minute.
 
-## Ausgabe: `praesentationen/tagesdetails/<id>.md`
+## Ausgabe: `praesentationen/sessions/<TAG>/TAGESBLATT.md`
 
 Eine Datei je Tag, `<id>` aus W0, S1–S5, T1–T20. Format strikt (das
 Gate liest es maschinell):

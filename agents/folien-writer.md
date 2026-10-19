@@ -38,7 +38,7 @@ verbindlich; das Gate (F-01 bis F-16) hält dich daran.
 4. Je Spezifikations-Punkt die EINE tragende Aussage; der Rest bleibt
    Handout. Im Zweifel entscheidet das Beispiel: Was sich nicht an einem
    konkreten Fall zeigen lässt, gehört nicht auf die Leinwand.
-5. Schreib das Deck nach praesentationen/decks/<name>.md im Format des
+5. Schreib das Deck nach praesentationen/sessions/<TAG>/<name>.md im Format des
    Regelwerks (docs/REGELWERK.md des Plugins), mit den Kopfzeilen
    `Grammatik: v2` und `Input: <n> min`.
 6. Melde am Ende: Folien- und Minutenzahl, Slot-Belegung, welche

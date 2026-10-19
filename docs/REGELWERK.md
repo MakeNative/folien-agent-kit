@@ -1,6 +1,6 @@
 # Regelwerk folien-kit
 
-Gilt für alle Decks unter `praesentationen/decks/` eines Dokumentprojekts.
+Gilt für alle Decks unter `praesentationen/sessions/<TAG>/` eines Dokumentprojekts.
 Die F-Regeln prüft `tools/folien_pruefen.py` maschinell; F-04 blockiert
 zusätzlich der PreToolUse-Hook `guard-leinwand` beim Schreiben.
 
@@ -87,7 +87,7 @@ Handout: <Modul, Folie/Abschnitt>
 ## Asset-Regeln (AS) — Bild-, Clip- und Foto-Erzeugung für Decks
 
 - **AS-01 · Plan vor Erzeugung.** Kein Asset ohne Block im
-  `ASSET-PLAN.md` des Decks (`praesentationen/pptx/assets/<deck>/`).
+  `ASSET-PLAN.md` des Decks (`praesentationen/sessions/<TAG>/assets/`).
   Der Plan legt je Marke Route, Datei, Maße und den **zeichengenauen
   Bildtext** fest — der Generator erfindet keinen Text.
 - **AS-02 · Routen.** `mock` (gebaute UI/Terminal-Mocks, HyperFrames —
@@ -128,7 +128,7 @@ Handout: <Modul, Folie/Abschnitt>
 ## Tagesdetail-Regeln (TD) — Durchführungsblätter je Programmtag
 
 - **TD-01 · Quelle oder Lücke.** Jede Angabe eines Tagesblatts
-  (`praesentationen/tagesdetails/<id>.md`) trägt eine Herkunft aus dem
+  (`praesentationen/sessions/<TAG>/TAGESBLATT.md`) trägt eine Herkunft aus dem
   Vokabular Board | Modul <id> | Deck <id> |
   Programm-Entscheidung <Datum> | LÜCKE. Was keine Quelle hat, wird
   als LÜCKE markiert und im Lücken-Abschnitt gespiegelt — nie

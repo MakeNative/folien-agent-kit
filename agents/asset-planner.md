@@ -20,14 +20,14 @@ Hook halten dich daran.
 
 ## Eingaben
 
-Deck (`praesentationen/decks/<name>.md`): alle `[Screenshot:|Bild:|Video:]`-
+Deck (`praesentationen/sessions/<TAG>/<name>.md`): alle `[Screenshot:|Bild:|Video:]`-
 Marken MIT ihrem Folien-Kontext (Titel, sichtbare Zeilen, SAGEN/TUN der
 Folie — das Bild muss die erzählte Geschichte tragen, nicht irgendeine).
 Dazu `praesentationen/pptx/assets/FIKTIV-REGISTER.md` (existiert es nicht,
 legst du es an) und, falls vorhanden, der Plan eines Nachbar-Decks als
 Formatreferenz.
 
-## Ausgabe: `praesentationen/pptx/assets/<deck>/ASSET-PLAN.md`
+## Ausgabe: `praesentationen/sessions/<TAG>/assets/ASSET-PLAN.md`
 
 Kopfblock (Deck, Datum, Policy-Satz), dann je Marke ein Block:
 

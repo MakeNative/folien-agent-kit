@@ -19,7 +19,7 @@ gemeldet, nie gefüllt (TD-01).
    zulässigen Programm-Entscheidungen samt Datum (nur die darf der
    Writer etikettieren).
 3. **Gate.** `python3 "${CLAUDE_PLUGIN_ROOT}/tools/tagesdetail_pruefen.py"
-   praesentationen/tagesdetails/` — Befunde als Fix-Auftrag zurück an
+   praesentationen/sessions/<TAG>/` — Befunde als Fix-Auftrag zurück an
    den Writer, maximal zwei Runden. (Der Hook fährt dasselbe Gate bei
    jedem Schreiben eines Tagesblatts.)
 4. **Prüfer, parallel:** `board-treue-pruefer` (Quellen-Echtheit,
@@ -32,7 +32,7 @@ gemeldet, nie gefüllt (TD-01).
    zwischen Board-Karte und Deck/Modul sind Programm-Entscheidungen —
    im Chat melden, nicht still auflösen.
 6. **Ablage + Protokoll.** Prüfberichte nach
-   `praesentationen/decks/pruefberichte/tagesdetails-<welle>-<rolle>.md`
+   `praesentationen/pruefberichte/tagesdetails-<welle>-<rolle>.md`
    (dort liegen auch die Asset-Berichte — ein Ort für alle
    Prüfberichte dieses Projekts);
    je Agentenlauf ein `agentenlauf`-Ereignis mit Token und Dauer, je

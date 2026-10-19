@@ -35,7 +35,7 @@ Setzung und wird als solche markiert (FB-01, FB-02).
    die GEBAUTEN Bögen aus Notion zurück, schreibt
    `FORMULAR-FREIGABE.md` im strikten Format mit Stand-Datum =
    Datum der letzten Baulog-Zeile). Bericht ablegen unter
-   `praesentationen/decks/pruefberichte/eval-formulare-validator.md`.
+   `praesentationen/pruefberichte/eval-formulare-validator.md`.
    Abgelehnte Bögen ⇒ EINE gebündelte Fixrunde an den Bauer; danach
    neue Baulog-Zeile (die alte Freigabe verfällt maschinell) und
    Validator erneut. Nach der zweiten Ablehnung liegt das Problem in

@@ -17,9 +17,9 @@ je Block ist `Status: erzeugt` plus Ledger-Zeile (AS-04).
 
 ## Ablage
 
-`praesentationen/pptx/assets/<deck>/` — Dateien exakt wie im Plan
+`praesentationen/sessions/<TAG>/assets/` — Dateien exakt wie im Plan
 (`F<nr>.png`, Clips zusätzlich `F<nr>.mp4`). HyperFrames-Projekte liegen
-unter `praesentationen/pptx/assets/_projekte/<deck>/` (EIN Projekt je
+unter `praesentationen/sessions/<TAG>/assets/quellen/` (EIN Projekt je
 Deck, alle Mocks als eigene Kompositionen darin — bei Deck-Fixes wird
 neu gerendert statt neu gebaut).
 
@@ -35,7 +35,7 @@ Marken-Logos.
 
 Vorgehen (alle Kommandos als `(cd "<projekt>" && …)`-Subshell):
 1. Einmalig je Deck: `npx hyperframes init
-   praesentationen/pptx/assets/_projekte/<deck> --non-interactive
+   praesentationen/sessions/<TAG>/assets/quellen --non-interactive
    --example=blank` (init legt den Ordner an).
 2. Je Block `compositions/f<nr>.html`; `npx hyperframes check .` grün.
 3. PNG ziehen: Host `index.html` auf die jeweilige Komposition mounten,
