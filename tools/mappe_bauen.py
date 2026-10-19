@@ -194,6 +194,19 @@ def vorfuehrprojekt(repo: str, tag: str, ziel: Path) -> str:
     """
     ziel.mkdir(parents=True, exist_ok=True)
     lokal = Path(os.path.expanduser(repo))
+    if not (lokal / ".git").is_dir():
+        # Das Manifest nennt die URL, damit es auf jedem Rechner gilt. Wer
+        # eine Arbeitskopie hat, soll aber nicht uebers Netz gehen — und
+        # vor allem soll ein Stand, der noch nicht gepusht ist, trotzdem
+        # in die Mappe kommen. VORFUEHRPROJEKT zeigt darauf.
+        kopie = Path(os.path.expanduser(
+            os.environ.get("VORFUEHRPROJEKT",
+                           "~/StudioProjects/vorfuehrprojekt")))
+        if (kopie / ".git").is_dir() and subprocess.run(
+                ["git", "-C", str(kopie), "rev-parse", "--verify",
+                 "--quiet", tag + "^{commit}"],
+                capture_output=True).returncode == 0:
+            lokal = kopie
     if (lokal / ".git").is_dir():
         aus = ziel / "vorfuehrprojekt"
         aus.mkdir(parents=True, exist_ok=True)
