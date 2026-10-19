@@ -30,13 +30,36 @@ import zipfile
 from datetime import date
 from pathlib import Path
 
+# Zielordner nach ART. Nur zwei Arten nennen ueberhaupt eine Datei; wo
+# die Datei liegt, entscheidet NACH_PFAD und schlaegt diese Zuordnung.
+# (Bis 19.10.2026 standen hier zusaetzlich kanal/planb/uebergabe — Arten,
+# die es in keinem Manifest gibt. Toter Code, der Absicht vortaeuschte.)
 ORDNER = {
-    "datei":   "05_Mappe",
-    "druck":   "04_Drucken",
-    "kanal":   "03_Kanal",
-    "planb":   "07_PlanB",
-    "uebergabe": "06_Uebergabe",
+    "datei": "05_Mappe",
+    "druck": "04_Drucken",
 }
+# Welcher Unterordner der Requisiten in welchen Mappen-Ordner gehoert.
+NACH_PFAD = {
+    "laeufe": "07_PlanB",
+    "uebergabe": "06_Uebergabe",
+    "mappe": "05_Mappe",
+    "befunde": "07_PlanB",
+}
+
+
+def _quelle_ordner(datei: str) -> str:
+    """Der erste Pfadteil eines Manifest-Eintrags, oder '' bei einer Datei
+    direkt in requisiten/."""
+    roh = datei.replace("\\", "/").lstrip("./")
+    # "laeufe/" ist ein Ordner, kein Dateiname — der abschliessende Slash
+    # darf nicht dazu fuehren, dass der Eintrag im Fallback landet.
+    ordner_form = roh.endswith("/")
+    teile = [x for x in roh.split("/") if x]
+    if ordner_form:
+        return teile[0] if teile else ""
+    return teile[0] if len(teile) > 1 else ""
+
+
 ALLE_ORDNER = ["02_Deck", "03_Kanal", "04_Drucken", "05_Mappe",
                "06_Uebergabe", "07_PlanB", "08_Vorfuehrprojekt"]
 
@@ -54,12 +77,19 @@ def laden(sess: Path) -> dict:
         raise SystemExit(f"{p}: kein gültiges JSON — {e}")
 
 
+MUELL = shutil.ignore_patterns(".DS_Store", "__pycache__", ".git",
+                               "Thumbs.db", "*.pyc")
+
+
 def kopiere(quelle: Path, zielordner: Path) -> bool:
-    if not quelle.exists():
+    """Kopiert Datei oder Ordner in die Mappe. Betriebssystem-Muell bleibt
+    draussen — er landete sonst im ZIP und im Ordner des Trainers."""
+    if not quelle.exists() or quelle.name in (".DS_Store", "__pycache__"):
         return False
     zielordner.mkdir(parents=True, exist_ok=True)
     if quelle.is_dir():
-        shutil.copytree(quelle, zielordner / quelle.name, dirs_exist_ok=True)
+        shutil.copytree(quelle, zielordner / quelle.name,
+                        dirs_exist_ok=True, ignore=MUELL)
     else:
         shutil.copy2(quelle, zielordner / quelle.name)
     return True
@@ -176,16 +206,30 @@ def lies_mich(sess: Path) -> None:
          "## Ich will den Text einer Folie aendern\n"]
     z += [f"- `{d}` — das Deck. Folientext und Sprechnotizen stehen hier, "
           f"sonst nirgends." for d in decks] or ["- Diese Session hat kein Deck.\n"]
-    z.append("\n## Ich will ein Bild aendern\n")
-    z.append("- `assets/` — die fertigen PNG. Nie von Hand bearbeiten.")
-    z.append("- `assets/quellen/compositions/` — die HTML-Quelle je Bild. "
-             "Dort aendern, dann neu rendern.")
-    z.append("- `assets/FREIGABE.md` — ohne Zeile dort legt der Builder das "
-             "Bild nicht auf die Folie.\n")
+    # Nur nennen, was es hier wirklich gibt — ein Wegweiser, der auf
+    # fehlende Dateien zeigt, schickt den Editor ins Leere (19.10.2026).
+    if (sess / "assets").is_dir():
+        z.append("\n## Ich will ein Bild aendern\n")
+        z.append("- `assets/` — die fertigen PNG. Nie von Hand bearbeiten.")
+        if (sess / "assets" / "quellen").is_dir():
+            z.append("- `assets/quellen/compositions/` — die HTML-Quelle je "
+                     "Bild. Dort aendern, dann neu rendern.")
+        if (sess / "assets" / "FREIGABE.md").exists():
+            z.append("- `assets/FREIGABE.md` — ohne Zeile dort legt der "
+                     "Builder das Bild nicht auf die Folie.")
+        z.append("")
     z.append("## Ich will aendern, was der Trainer in die Hand bekommt\n")
-    z.append("- `requisiten/manifest.json` — die Liste. Jeder Eintrag nennt "
-             "Folie, Art und (wenn es eine gibt) die Datei.")
-    z.append("- `requisiten/` — das Material selbst.\n")
+    if (sess / "requisiten" / "manifest.json").exists():
+        z.append("- `requisiten/manifest.json` — die Liste. Jeder Eintrag "
+                 "nennt Folie, Art und (wenn es eine gibt) die Datei.")
+    else:
+        z.append("- **Diese Session hat noch kein `requisiten/manifest.json`.** "
+                 "Was sie braucht, steht als Prosa in den `TUN:`-Bloecken des "
+                 "Decks und unter „Requisiten\" im Tagesblatt — der "
+                 "Mappen-Bauer kann es deshalb nicht packen.")
+    if (sess / "requisiten").is_dir():
+        z.append("- `requisiten/` — das Material selbst.")
+    z.append("")
     if paper or modul:
         z.append("## Weitere Quellen dieser Session\n")
         z += [f"- `{m}` — das Handout-Modul" for m in modul]
@@ -193,8 +237,16 @@ def lies_mich(sess: Path) -> None:
         z.append("")
     z.append("## Ich will alles neu bauen\n")
     z.append("```\ncd praesentationen\n./bau " + tag + "\n```\n")
-    z.append("Das baut Deck, PDF mit Notizenseiten, Short Paper und die "
-             "Sitzungsmappe in einem Zug.\n")
+    # Nicht versprechen, was diese Session gar nicht hat.
+    teile = []
+    if decks:
+        teile.append("Deck und PDF mit Notizenseiten")
+    if paper:
+        teile.append("Short Paper")
+    teile.append("die Sitzungsmappe")
+    z.append("Das baut " + ", ".join(teile[:-1]) +
+             (" und " if len(teile) > 1 else "") + teile[-1] +
+             " in einem Zug.\n")
     z.append("## Finger weg\n")
     z.append("- `FUER-DEN-TRAINER/` — wird bei **jedem** Bau geloescht und "
              "neu erzeugt. Aenderungen dort sind nach dem naechsten Lauf weg.")
@@ -230,7 +282,16 @@ def baue(sess: Path) -> tuple[str, int, int]:
     # Requisiten nach Art verteilen
     fehlt: list[dict] = []
     wurzel = sess / "requisiten"
-    for e in (daten.get("requisiten") or []):
+    eintraege = daten.get("requisiten") or []
+
+    # Nennt das Manifest einen ganzen Ordner (laeufe/), dann decken dessen
+    # Dateien alle Einzeleintraege darunter ab. Ohne diese Vorfilterung lag
+    # lauf-3-mit-mappe.md zweimal in der Mappe (gefunden 19.10.2026).
+    ordner_eintraege = {e["datei"].rstrip("/") for e in eintraege
+                        if e.get("datei", "").endswith("/")}
+    gesehen: set[str] = set()
+
+    for e in eintraege:
         art = e.get("art")
         datei = e.get("datei")
         # Alles, was keine Datei nennt, kann kein Werkzeug packen — es
@@ -239,10 +300,23 @@ def baue(sess: Path) -> tuple[str, int, int]:
         if art in ("trainer", "session") or not datei:
             fehlt.append(e)
             continue
+        norm = datei.rstrip("/")
+        if norm in gesehen:
+            continue                      # derselbe Pfad zweimal im Manifest
+        if "/" in norm and norm.split("/")[0] in ordner_eintraege:
+            continue                      # steckt schon im Ordner-Eintrag
+        gesehen.add(norm)
         q = (wurzel / datei).resolve()
-        ordner = ORDNER.get(art, "05_Mappe")
         if art == "asset":
             continue                      # steckt schon im Deck
+        # Der Zielordner folgt dem PFAD, nicht nur der Art: ein Eintrag
+        # art=datei kann auf laeufe/, uebergabe/ oder mappe/ zeigen. Vorher
+        # landete alles davon in 05_Mappe und wurde danach ein zweites Mal
+        # am richtigen Ort abgelegt — 05_Mappe war ein Sammelbecken mit
+        # Doppelungen (gefunden 19.10.2026).
+        ordner = NACH_PFAD.get(_quelle_ordner(datei), ORDNER.get(art, "05_Mappe"))
+        if q.name.startswith("handout-"):
+            ordner = "03_Kanal"
         if kopiere(q, mappe / ordner):
             gepackt += 1
             if ordner not in gelegt:
@@ -252,6 +326,9 @@ def baue(sess: Path) -> tuple[str, int, int]:
     for name, ordner in (("laeufe", "07_PlanB"), ("uebergabe", "06_Uebergabe"),
                          ("mappe", "05_Mappe")):
         q = wurzel / name
+        if name in ordner_eintraege or any(
+                d.startswith(name + "/") for d in gesehen):
+            continue                      # das Manifest hat ihn schon
         if q.is_dir() and not (mappe / ordner).exists():
             (mappe / ordner).mkdir(parents=True, exist_ok=True)
             for f in sorted(q.iterdir()):
