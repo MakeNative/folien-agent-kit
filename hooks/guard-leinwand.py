@@ -36,6 +36,18 @@ def neuer_text(eingabe: dict) -> str:
     return ""
 
 
+def _traegt_leinwandzeit(pfad: str) -> bool:
+    """Ein Deck traegt die Kopfzeile `Leinwandzeit:`, ein Modul oder Tagesblatt nicht."""
+    try:
+        with open(pfad, encoding="utf-8", errors="replace") as f:
+            for _, zeile in zip(range(20), f):
+                if zeile.startswith("Leinwandzeit:"):
+                    return True
+    except OSError:
+        return False
+    return False
+
+
 def main():
     try:
         daten = json.load(sys.stdin)
@@ -49,7 +61,13 @@ def main():
         # Prüfberichte und Spezifikationen liegen laut Skill unter decks/ und
         # sind keine Leinwand — sie zitieren Belege, statt welche zu tragen.
         sys.exit(0)
-    if "/praesentationen/decks/" not in teile and not teile.startswith("praesentationen/decks/"):
+    # Seit dem Umzug „Eine Session, ein Ordner" liegt das Deck unter
+    # praesentationen/sessions/<ID>/ neben Modul, Paper und Tagesblatt. Ein Test
+    # nur auf decks/ macht diesen Hook stumm, und ein stummer Hook sieht aus wie
+    # ein gruener. Unter sessions/ entscheidet die Kopfzeile `Leinwandzeit:`.
+    unter_decks = "/praesentationen/decks/" in teile or teile.startswith("praesentationen/decks/")
+    unter_sessions = "/praesentationen/sessions/" in teile or teile.startswith("praesentationen/sessions/")
+    if not unter_decks and not (unter_sessions and _traegt_leinwandzeit(teile)):
         sys.exit(0)
     text = neuer_text(daten.get("tool_input") or {})
     treffer = re.findall(r"\[\^[A-Za-z0-9][\w-]*\]", text)

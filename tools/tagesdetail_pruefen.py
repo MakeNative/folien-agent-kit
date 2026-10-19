@@ -39,7 +39,10 @@ import gemeinsam  # noqa: E402
 # nur bei L0/L1). Sie steht neben W0, weil sie einen anderen Teilnehmerkreis hat:
 # Gruppe statt einem Dev, Lizenzen auch fuer Nicht-Entwickler, MCP-Freigabe mit
 # der IT, Baseline vor dem Starter.
-TAG_IDS = {"W0", "W0-F", *{f"S{i}" for i in range(1, 6)}, *{f"T{i}" for i in range(1, 21)}}
+# T0 ist kein Board-Tag, sondern ein eigener, OPTIONALER Programmtag
+# (Christian, 19.10.2026): das Grundlagen-Intro zu M0B vor W1.
+TAG_IDS = {"W0", "W0-F", "T0",
+           *{f"S{i}" for i in range(1, 6)}, *{f"T{i}" for i in range(1, 21)}}
 ARTEN = ("Live-Session", "Gruppen-Session", "Workshop", "Eigenarbeit",
          "Check-in", "Messung", "GF-Report", "Abschlusstermin", "intern")
 ROLLEN = ("Entwickler", "Trainer", "Team-Lead", "GF", "intern")
@@ -103,12 +106,26 @@ def datei_da(wurzel: Path, ordner: str, kennung: str) -> bool:
     m = re.fullmatch(r"M(\d)", kennung)
     if m:  # Board-Kurzform M2 → Dateikennung M02
         kandidaten.append(f"M0{m.group(1)}")
-    basis = wurzel / "praesentationen" / ordner
+    m = re.fullmatch(r"M(\d)([A-Za-z])", kennung)
+    if m:  # Board-Kurzform M9b → Dateikennung M09B (Anhangbloecke)
+        kandidaten.append(f"M0{m.group(1)}{m.group(2).upper()}")
+    # Seit dem Umzug am 19.10.2026 liegt alles, was zu einem Programmtag
+    # gehoert, in praesentationen/sessions/<TAG>/. Module ohne Deck und
+    # uebergreifende Dateien stehen weiter in praesentationen/module/.
+    # Gesucht wird in beidem, damit das Gate waehrend und nach dem Umzug
+    # dasselbe Ergebnis liefert.
+    orte = [wurzel / "praesentationen" / "sessions",
+            wurzel / "praesentationen" / ordner]
     for k in kandidaten:
-        if (basis / f"{k}.md").exists():
-            return True
-        if any(p.stem == k or p.stem.startswith(f"{k}-") for p in basis.glob("*.md")):
-            return True
+        for basis in orte:
+            if not basis.exists():
+                continue
+            if (basis / f"{k}.md").exists():
+                return True
+            muster = "*/*.md" if basis.name == "sessions" else "*.md"
+            if any(p.stem == k or p.stem.startswith(f"{k}-")
+                   for p in basis.glob(muster)):
+                return True
     return False
 
 
@@ -162,12 +179,16 @@ def pruefe_quelle(q: str, name: str, wo: str, wurzel: Path | None,
 def pruefe_blatt(pfad: Path, wurzel: Path | None) -> list[str]:
     b: list[str] = []
     pe = pe_register(wurzel)
-    name = pfad.stem
+    # Seit dem Umzug am 19.10.2026 heisst jedes Blatt TAGESBLATT.md und
+    # liegt in sessions/<TAG>/ — dann traegt der Ordner die Tag-ID. Die
+    # alte Form <TAG>.md bleibt gueltig, damit Blaetter ausserhalb einer
+    # Session (und die Selbsttests) unveraendert durchlaufen.
+    name = pfad.parent.name if pfad.stem == "TAGESBLATT" else pfad.stem
     text = pfad.read_text(encoding="utf-8")
 
     if name not in TAG_IDS:
-        b.append(f"TD-G5 {pfad.name}: Dateiname '{name}' ist keine Board-Tag-ID "
-                 f"(W0, S1–S5, T1–T20; T0 ist kein Board-Tag)")
+        b.append(f"TD-G5 {pfad.name}: '{name}' ist keine Board-Tag-ID "
+                 f"(W0, W0-F, T0, S1–S5, T1–T20)")
 
     kopfzeilen, teile = abschnitte(text)
     kopf: dict[str, str] = {}
@@ -294,9 +315,14 @@ def pruefe_blatt(pfad: Path, wurzel: Path | None) -> list[str]:
     if wurzel is not None:
         for feld, ordner in (("Modul", "module"), ("Deck", "decks")):
             wert = kopf.get(feld, "—")
-            if wert and wert != "—" and not datei_da(wurzel, ordner, wert):
-                b.append(f"TD-G5 {name}: {feld} '{wert}' — keine Datei "
-                         f"praesentationen/{ordner}/{wert}.md bzw. {wert}-*.md")
+            if not wert or wert == "—":
+                continue
+            # Ein Termin kann zwei Bloecke tragen (T17: M9 + M09B). Dann steht
+            # im Kopffeld jede Kennung einzeln, verbunden mit " + ".
+            for teil in [t.strip() for t in wert.split(" + ") if t.strip()]:
+                if not datei_da(wurzel, ordner, teil):
+                    b.append(f"TD-G5 {name}: {feld} '{teil}' — keine Datei "
+                             f"praesentationen/{ordner}/{teil}.md bzw. {teil}-*.md")
     return b
 
 

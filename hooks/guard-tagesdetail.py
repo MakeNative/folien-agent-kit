@@ -26,7 +26,14 @@ def main():
     if not p.is_absolute():  # relativer Pfad: gegen das CWD des Aufrufers
         p = Path(daten.get("cwd") or ".") / p
     teile = p.as_posix()
-    if "/praesentationen/tagesdetails/" not in teile or not teile.endswith(".md"):
+    # Tagesblaetter lagen unter praesentationen/tagesdetails/<ID>.md und liegen
+    # seit dem Umzug als praesentationen/sessions/<ID>/TAGESBLATT.md. Beide Orte
+    # gelten, sonst faellt dieser Hook still aus.
+    alt_ort = "/praesentationen/tagesdetails/" in teile and teile.endswith(".md")
+    neu_ort = ("/praesentationen/sessions/" in teile
+               or teile.startswith("praesentationen/sessions/")) \
+              and Path(teile).name == "TAGESBLATT.md"
+    if not alt_ort and not neu_ort:
         sys.exit(0)
     if not Path(teile).exists() or not WERKZEUG.exists():
         sys.exit(0)

@@ -14,6 +14,33 @@ from pathlib import Path
 WERKZEUG = Path(__file__).resolve().parent.parent / "tools" / "folien_pruefen.py"
 
 
+def ist_deck(teile: str, pfad: Path) -> bool:
+    """Liegt hier ein Deck?
+
+    Der Ablageort allein taugt nicht mehr: Seit dem Umzug „Eine Session, ein
+    Ordner" liegt das Deck neben Modul, Paper, Tagesblatt und Design-Karte in
+    `praesentationen/sessions/<ID>/`. Ein Test nur auf `decks/` lässt das Gate
+    still durchfallen — es feuert dann bei keinem einzigen Deck mehr, und das
+    merkt niemand, weil ein stummer Hook wie ein grüner aussieht.
+
+    Unter `sessions/` entscheidet deshalb der Inhalt: Ein Deck trägt die
+    Kopfzeile `Leinwandzeit:`, ein Modul oder Tagesblatt nicht. Spezifikationen
+    tragen sie auch, sind aber vorher schon am Namen ausgenommen.
+    """
+    if "/praesentationen/decks/" in teile or teile.startswith("praesentationen/decks/"):
+        return True
+    if "/praesentationen/sessions/" not in teile and not teile.startswith("praesentationen/sessions/"):
+        return False
+    try:
+        with pfad.open(encoding="utf-8", errors="replace") as f:
+            for _, zeile in zip(range(20), f):
+                if zeile.startswith("Leinwandzeit:"):
+                    return True
+    except OSError:
+        return False
+    return False
+
+
 def main():
     try:
         daten = json.load(sys.stdin)
@@ -29,10 +56,10 @@ def main():
     if "/.claude/" in teile:
         # Agent-Memory und andere Metadateien unter decks/ sind keine Decks.
         sys.exit(0)
-    if "/praesentationen/decks/" not in teile and not teile.startswith("praesentationen/decks/"):
-        sys.exit(0)
     pfad = Path(pfad_roh)
     if not pfad.exists() or not WERKZEUG.exists():
+        sys.exit(0)
+    if not ist_deck(teile, pfad):
         sys.exit(0)
     try:
         lauf = subprocess.run([sys.executable, str(WERKZEUG), str(pfad), "--ausloeser", "hook"],

@@ -28,7 +28,11 @@ def main():
     if not p.is_absolute():  # relativer Pfad: gegen das CWD des Aufrufers
         p = Path(daten.get("cwd") or ".") / p
     teile = p.as_posix()
-    if "/pptx/assets/" not in teile or Path(teile).name not in ZIELE:
+    # Asset-Mappen lagen unter pptx/assets/<deck>/ und liegen seit dem Umzug
+    # als sessions/<ID>/assets/. Beide Orte gelten.
+    in_mappe = "/pptx/assets/" in teile or "/praesentationen/sessions/" in teile \
+               or teile.startswith("praesentationen/sessions/")
+    if not in_mappe or Path(teile).name not in ZIELE:
         sys.exit(0)
     deckname = Path(teile).parent.name
     # Wurzel: …/praesentationen/pptx/assets/<deck>/<datei>

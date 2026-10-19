@@ -15,6 +15,7 @@ from pathlib import Path
 
 HIER = Path(__file__).resolve().parent
 GATE = HIER / "folien_pruefen.py"
+TAGES_GATE = HIER / "tagesdetail_pruefen.py"
 
 GUT = """# Testdeck
 Budget: 2 Folien
@@ -422,6 +423,53 @@ def papier_pruefen(text: str) -> tuple[int, str]:
         return r.returncode, r.stdout + r.stderr
 
 
+TAGESBLATT = """# T17 — Testtag (Di)
+Board-Zeit: 90 min
+Plan-Zeit: 90 min
+Badge: Live-Session, 90 min
+Art: Live-Session
+Teilnehmer: Entwickler, Trainer
+Modul: {modul}
+Deck: {deck}
+Rolle: Product Engineer
+Level-Ziel: —
+
+## Ablauf
+- 90 min — Folie 1, Testzeile (Quelle: Deck d-test; Modul M09B)
+
+## Ergebnis
+- Keines. (Quelle: LÜCKE)
+
+## Vorbereitung
+- Nichts. (Quelle: LÜCKE)
+
+## Requisiten
+- Keine. (Quelle: LÜCKE)
+
+## Lücken
+- LÜCKE: nur ein Testfall, drei Quellen tragen sie.
+- LÜCKE: zweiter Platzhalter.
+- LÜCKE: dritter Platzhalter.
+"""
+
+
+def tagesdetail_pruefen(modul: str, deck: str) -> tuple[int, str]:
+    """Baut ein Mini-Projekt mit einem Modul M09B und einem Deck d-test."""
+    with tempfile.TemporaryDirectory() as d:
+        p = Path(d) / "praesentationen"
+        (p / "module").mkdir(parents=True)
+        (p / "decks").mkdir()
+        (p / "tagesdetails").mkdir()
+        (p / "module" / "M09B-remote.md").write_text("# M9b\n", encoding="utf-8")
+        (p / "module" / "M09-system.md").write_text("# M9\n", encoding="utf-8")
+        (p / "decks" / "d-test.md").write_text("# d\n", encoding="utf-8")
+        f = p / "tagesdetails" / "T17.md"
+        f.write_text(TAGESBLATT.format(modul=modul, deck=deck), encoding="utf-8")
+        r = subprocess.run([sys.executable, str(TAGES_GATE), str(f)],
+                           capture_output=True, text=True)
+        return r.returncode, r.stdout + r.stderr
+
+
 def main():
     SPEZ = (
         "# Spez\n"
@@ -465,7 +513,26 @@ def main():
             ok += 1
         else:
             print(f"FEHLT: {name}")
-    gesamt = len(ERWARTUNGEN) + 2
+    # Tagesdetail-Gate: zwei Wartungsfaelle vom 2026-10-18 festgenagelt.
+    # Anlass: Tagesblatt T17 traegt seit dem Anhangblock M9b zwei Module und
+    # zwei Decks im Kopf; TD-G5 pruefte den Feldwert als EINEN Dateistamm und
+    # kannte die Kurzform M9b nicht.
+    for name, erfuellt in (
+        ("TD-G5 nimmt zwei Kennungen im Kopffeld (M9 + M09B)",
+         "TD-G5" not in tagesdetail_pruefen("M9 + M09B", "d-test")[1]),
+        ("TD-G5 loest die Kurzform M9b auf M09B auf",
+         "TD-G5" not in tagesdetail_pruefen("M9b", "d-test")[1]),
+        ("TD-G5 beisst weiterhin bei einer erfundenen Kennung",
+         "TD-G5" in tagesdetail_pruefen("M42", "d-test")[1]),
+        ("TD-G5 meldet die fehlende Haelfte eines Doppelfelds",
+         "M77" in tagesdetail_pruefen("M9 + M77", "d-test")[1]),
+    ):
+        if erfuellt:
+            ok += 1
+        else:
+            print(f"FEHLT: {name}")
+
+    gesamt = len(ERWARTUNGEN) + 2 + 4
     print("─" * 60)
     print(f"{ok} von {gesamt} Erwartungen erfüllt")
     raise SystemExit(0 if ok == gesamt else 1)
