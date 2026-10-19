@@ -1,12 +1,13 @@
 #!/usr/bin/env python3
 """Gate der Requisiten-Strasse: Manifest gegen Deck, Dateien und BEDARFE.
 
-    requisiten_pruefen.py [praesentationen] [--streng]
+    requisiten_pruefen.py [praesentationen] [--nachsichtig]
 
-Ohne --streng sind die Punkte, die heute noch nicht ueberall erfuellt
-sind, Hinweise statt Befunde — so wie es der Plan vorsieht: scharf
-geschaltet wird erst, wenn alle 28 Sessions ein geprueftes Manifest
-haben.
+**Scharf seit 19.10.2026.** Bis dahin waren R-5 und R-6 nur Hinweise,
+weil 13 Deck-Sessions ueberhaupt kein Manifest hatten. Seit alle 28 eins
+haben und alle 28 gruen sind, ist aus dem Hinweis ein Befund geworden —
+so sieht es der Plan vor. `--nachsichtig` dreht es fuer einen Lauf
+zurueck, etwa waehrend eine neue Session entsteht.
 
 Geprueft wird:
   R-1  Jeder Eintrag hat Folie (bei Decks), Art und braucht-Text.
@@ -69,7 +70,7 @@ def bedarfe(pfad: Path) -> dict[tuple[str, int], str]:
 
 
 def main() -> int:
-    streng = "--streng" in sys.argv
+    streng = "--nachsichtig" not in sys.argv
     args = [a for a in sys.argv[1:] if not a.startswith("--")]
     wurzel = Path(args[0] if args else ".").resolve()
     bed = bedarfe(wurzel / "BEDARFE.md") if (wurzel / "BEDARFE.md").exists() else {}
@@ -108,7 +109,12 @@ def main() -> int:
             if hat_deck and not e.get("folie"):
                 befunde.append(f"{wo}: keine Folie (Deck-Session)")
             if art in ("datei", "vorlage") and not e.get("datei"):
-                befunde.append(f"{wo}: Art {art} ohne Datei")
+                # Was im Vorfuehrprojekt liegt, wird nicht kopiert: Die
+                # Mappe bringt es unter 08_Vorfuehrprojekt/ ohnehin mit,
+                # und zwei Fassungen derselben Datei laufen auseinander
+                # (am 19.10. genau so passiert).
+                if "Vorführprojekt" not in (e.get("hinweis") or ""):
+                    befunde.append(f"{wo}: Art {art} ohne Datei")
             # R-2
             datei = e.get("datei")
             if datei:
@@ -143,13 +149,21 @@ def main() -> int:
                         f"{sess.name} F{nr}: BEDARFE nennt Art `{art}`, "
                         f"das Manifest hat keinen Eintrag")
 
+    # --streng heisst: die Hinweise sind jetzt Befunde. Sie nur zu
+    # zaehlen und trotzdem gruen zu melden waere ein Gate, das nichts
+    # haelt (gefunden 19.10.2026 beim Scharfschalten).
+    if streng:
+        befunde += hinweise
+        hinweise = []
+
     print(f"{mit} Manifest(e), {len(ohne)} Session(en) ohne — "
           f"{len(befunde)} Befund(e), {len(hinweise)} Hinweis(e)"
-          f"{'  [streng]' if streng else ''}")
+          f"{'' if streng else '  [nachsichtig]'}")
     for b in befunde:
         print("  ! " + b)
     if hinweise and not streng:
-        print(f"\n  ({len(hinweise)} Hinweise, mit --streng werden sie Befunde)")
+        print(f"\n  ({len(hinweise)} Hinweise — ohne --nachsichtig waeren "
+              f"sie Befunde)")
         for h in hinweise[:8]:
             print("    i " + h)
         if len(hinweise) > 8:
