@@ -46,6 +46,7 @@ Python 3 wird gebraucht, sonst nichts — die Werkzeuge nutzen nur die Standardb
 | `trainer-leser` | hält das Deck probehalber ab und meldet, wo die Session kippt |
 | `publikum-entwickler` | sitzt als skeptischer Entwickler drin, memoryfrei als Messinstrument |
 | `lauf-auswerter` | wertet Laufprotokoll und Gate-Berichte über die Pipeline selbst aus |
+| `folien-layout-pruefer` | prüft das PowerPoint-Rendering jeder Folie auf überlappenden, abgeschnittenen und überlaufenden Text |
 
 **3 Skills** (`skills/`):
 
@@ -58,6 +59,7 @@ Python 3 wird gebraucht, sonst nichts — die Werkzeuge nutzen nur die Standardb
 **Gates und Regeln:**
 
 - `tools/folien_pruefen.py` — maschinelles Gate F-01…F-06, mit Selbsttest
+- `tools/layout_pruefen.py` — Layout-Gate für gebaute PPTX: rendert mit PowerPoint (macOS), bricht bei Ersatzschrift ab, misst Wortüberlappung und Überlauf mit echten Glyphenbreiten; Selbsttest `tools/layout_selbsttest.py`. Nie auf einem LibreOffice-Rendering abnehmen: headless ersetzt es Schriften still.
 - `hooks/guard-leinwand.py` — blockiert Fußnoten auf Folien (PreToolUse)
 - `hooks/guard-folien.py` — misst nach jedem Schreiben (PostToolUse)
 - `docs/REGELWERK.md` — F-, D- und FP-Regeln sowie das Deck-Format
