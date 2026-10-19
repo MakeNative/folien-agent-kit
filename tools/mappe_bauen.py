@@ -438,10 +438,33 @@ def baue(sess: Path) -> tuple[str, int, int, list[str]]:
         # landete alles davon in 05_Mappe und wurde danach ein zweites Mal
         # am richtigen Ort abgelegt — 05_Mappe war ein Sammelbecken mit
         # Doppelungen (gefunden 19.10.2026).
-        ordner = NACH_PFAD.get(_quelle_ordner(datei), ORDNER.get(art, "05_Mappe"))
+        erst = _quelle_ordner(datei)
+        ordner = NACH_PFAD.get(erst, ORDNER.get(art, "05_Mappe"))
         if q.name.startswith("handout-"):
             ordner = "03_Kanal"
-        if kopiere(q, mappe / ordner):
+        # Ein Unterordner, den NACH_PFAD nicht kennt (vorlagen/), bleibt
+        # erhalten — sonst nennt das Runbook 05_Mappe/vorlagen/x.md und
+        # die Datei liegt flach daneben. Genau so ein toter Pfad war am
+        # 19.10. der Anlass fuer diese Zeile.
+        ziel_ordner = mappe / ordner
+        unter = Path(datei).parent
+        if erst and erst not in NACH_PFAD and str(unter) not in (".", ""):
+            ziel_ordner = ziel_ordner / unter
+        # NACH_PFAD ist eine UMBENENNUNG: laeufe/ wird zu 07_PlanB/, nicht
+        # zu 07_PlanB/laeufe/. Also wandert der INHALT, nicht der Ordner —
+        # sonst nennt der Lieferpfad 07_PlanB/x.md und die Datei liegt
+        # unter 07_PlanB/laeufe/x.md (vom Selbsttest gefunden, 19.10.).
+        if q.is_dir() and erst in NACH_PFAD:
+            ziel_ordner.mkdir(parents=True, exist_ok=True)
+            gepackt_hier = sum(1 for f in sorted(q.iterdir())
+                               if kopiere(f, ziel_ordner))
+            if gepackt_hier:
+                gepackt += gepackt_hier
+                protokoll.append(f"ok     {lieferpfad(datei)}  <- requisiten/{datei}")
+                if ordner not in gelegt:
+                    gelegt.append(ordner)
+                continue
+        if kopiere(q, ziel_ordner):
             gepackt += 1
             protokoll.append(f"ok     {lieferpfad(datei)}  <- requisiten/{datei}")
             if ordner not in gelegt:
@@ -507,6 +530,21 @@ def baue(sess: Path) -> tuple[str, int, int, list[str]]:
         + ("\n".join(protokoll) if protokoll else "(nichts gepackt)") + "\n",
         encoding="utf-8")
     lies_mich(sess)
+
+    # Selbsttest: Jeder Pfad, den das Runbook nennt, muss in der Mappe
+    # liegen. Ein Runbook, das ins Leere zeigt, ist schlimmer als keins —
+    # der Trainer sucht dann in der Session. (19.10.2026: genau das war
+    # der Fall, weil der Lieferpfad einen Unterordner nannte und die
+    # Kopie ihn fallen liess.)
+    tote = []
+    for m in re.finditer(r"^`([^`]+)`$", (mappe / "09_RUNBOOK.md").read_text(
+            encoding="utf-8"), re.M):
+        pfad = m.group(1)
+        if not (mappe / pfad).exists():
+            tote.append(pfad)
+    for pfad in tote:
+        luecken.append(f"Runbook nennt `{pfad}` — liegt nicht in der Mappe")
+        protokoll.append(f"TOT    {pfad}  <- im Runbook genannt, nicht gepackt")
 
     # ZIP daneben, damit der Trainer eine Datei zieht statt eines Baums
     zpfad = ziel_wurzel / f"Sitzungsmappe-{tag}.zip"
