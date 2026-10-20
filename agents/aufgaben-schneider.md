@@ -49,12 +49,18 @@ unten — das ist der Fehler, der im ersten Lauf passiert ist.
 
 ### Die Regel als Mechanik (T3 F10, T4 F16, T13 F16)
 
-Nimm die mechanisch prüfbare Regel aus der Anweisungsdatei und schreib
-sie als Hook. Zwei Zeilen, die dasselbe verlangen — eine als Bitte, eine
+Nimm die mechanisch prüfbare Regel, die der Leser gefunden hat — aus der
+Anweisungsdatei, oder, wenn es keine gibt, aus der Struktur des Projekts
+selbst (eine Modulgrenze, die durchgehend gilt). Schreib sie als Hook. Zwei Zeilen, die dasselbe verlangen — eine als Bitte, eine
 als Sperre. Der Hook bricht mit **Exit-Code 2** ab und meldet den Grund.
 
 Dass die Regel aus dem Projekt selbst stammt, ist der Punkt: Die Demo
-erzwingt nichts Erfundenes, sondern das, was dort ohnehin steht.
+erzwingt nichts Erfundenes, sondern das, was dort ohnehin gilt.
+
+**Erfinde keine Regel.** Findet der Leser weder eine geschriebene noch
+eine gelebte, ist T3 F10 nicht übertragbar. Eine Bitte, die wir
+geschrieben haben, und eine Mechanik, die wir geschrieben haben, zeigen
+nicht, dass Regeln erodieren.
 
 ### Der Schreibkonflikt (T7 F7, T12 F11)
 
@@ -75,7 +81,8 @@ falsch zählen.
 ## Der Fehler aus Lauf 1, den du nicht wiederholst
 
 Der erste Schnitt wählte eine Zieldatei, deren Testbereich **drei
-vorbestehende Fehlschläge** trug. Beim Testbefehl in der Demo sah es
+vorbestehende Fehlschläge** trug — und als Ziel für die Lesefrage
+beinahe eine Testdatei, weil sie die größte war. Beim Testbefehl in der Demo sah es
 aus, als hätte der Agent etwas kaputtgemacht.
 
 **Also: Vor jedem Schnitt, der einen Testbefehl zeigt, den Testbereich

@@ -174,6 +174,42 @@ erwarte("D5 kein Repo-Name in einer Agenten-Datei",
                 if p.stem not in ("repo-leser", "aufgaben-schneider")),
         "ein Fix, der einen Repo-Namen enthaelt, ist keiner")
 
+# ──────────────── E · Die Lehren der Laeufe bleiben drin ─────────────────
+# Ein Fix, den kein Test festhaelt, verschwindet beim naechsten Umbau.
+leser = (KIT / "agents" / "repo-leser.md").read_text(encoding="utf-8")
+schneider = (KIT / "agents" / "aufgaben-schneider.md").read_text(encoding="utf-8")
+
+erwarte("E1 Lauf 2 · zweiter Weg fuer T3 F10 ohne Anweisungsdatei",
+        "durch seine Struktur belegt" in leser,
+        "das zweite Repo hatte gar keine Anweisungsdatei")
+erwarte("E2 Lauf 2 · die Historie wird geprueft, nicht angenommen",
+        "statt es anzunehmen" in leser,
+        "in Lauf 2 trug kein einziger Commit-Betreff eine Vorgangsnummer")
+erwarte("E3 Lauf 2 · Testpfade sind kein Ziel fuer eine Lesefrage",
+        "Testpfade aus" in leser,
+        "in Lauf 2 waren die drei groessten eigenen Dateien Testdateien")
+erwarte("E4 Lauf 2 · der Schneider erfindet keine Regel",
+        "Erfinde keine Regel" in schneider)
+erwarte("E5 Lauf 1 · Testbereich der Zieldatei vorher fahren",
+        "Testbereich" in schneider and "gruen" in schneider.lower().replace("ü","ue"))
+erwarte("E5b Lauf 2 · der Testbefehl wird nicht geraten",
+        "rate den Befehl nicht" in leser,
+        "in Lauf 2 war der naheliegende Aufgabenname falsch")
+erwarte("E5c Lauf 2 · ein frischer Klon ist nicht lauffaehig",
+        "nicht lauffähig" in leser and "nachgereicht" in leser,
+        "unversionierte Konfiguration fuer den Testlauf nachholen")
+erwarte("E5d Lauf 2 · die nachgereichte Konfiguration kommt in keinen Bericht",
+        "Nichts davon kommt in einen Bericht" in leser)
+erwarte("E6 beide Agenten arbeiten auf einem Klon",
+        "Klon" in leser and "Klon" in schneider,
+        "nie im Arbeitsverzeichnis des Kunden")
+erwarte("E7 BEDARFE traegt die Auflage aus Lauf 1 zu T0 F11",
+        "vorher einmal gefahren und grün" in
+        (KIT.parent.parent / "Documents/agentic-coding-guide/praesentationen"
+         / "BEDARFE.md").read_text(encoding="utf-8")
+        if (KIT.parent.parent / "Documents/agentic-coding-guide/praesentationen"
+            / "BEDARFE.md").exists() else True)
+
 # ───────────────────────────── Ergebnis ─────────────────────────────────
 print("─" * 60)
 for f in fehlt:

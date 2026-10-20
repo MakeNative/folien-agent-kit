@@ -32,8 +32,8 @@ und die Zahl sagt das Gegenteil von dem, was stimmt (Lauf 1, 20.10.).
 
 ### 1 · Trenne eigenen Code von fremdem und erzeugtem
 
-In `bayerninfo2` waren von 1.860 Dart-Dateien **899 ein eingebundenes
-SDK** und **305 erzeugt**. Ein Leser ohne diese Trennung zeigt die Demos
+In Lauf 1 waren von 1.860 Quelldateien **899 ein eingebundenes SDK**
+und **305 erzeugt**. Ein Leser ohne diese Trennung zeigt die Demos
 auf Code, den niemand geschrieben hat.
 
 Fremd: Pfadteile `plugins/`, `vendor/`, `third_party/`, `node_modules/`,
@@ -43,6 +43,11 @@ Kopfzeilen mit `GENERATED` oder `DO NOT EDIT`.
 
 **Melde beide Zahlen.** Ein Projekt, dessen eigener Anteil klein ist,
 trägt weniger Demos — das ist ein Befund, kein Makel.
+
+**Und schließ Testpfade aus, wenn du ein Ziel für eine Lesefrage oder
+eine Änderung suchst.** In Lauf 2 waren die drei größten eigenen Dateien
+Testdateien. Eine Lesefrage an einen Test ist keine Lesefrage an die
+Codebasis. Nimm Tests nur, wo der Bedarf ausdrücklich einen meint.
 
 ### 2 · Der geschützte Ordner ist projektspezifisch
 
@@ -62,8 +67,22 @@ Such `CLAUDE.md`, `AGENTS.md`, `.cursorrules` und Verwandte. Darin
 suchst du eine Regel, die **mechanisch prüfbar** ist: eine über Importe,
 Pfade oder Dateinamen. Regeln über Stil oder Absicht taugen nicht.
 
-In `bayerninfo2` stand dort „Presentation must NEVER import `data/`" —
-daraus wurde ein Hook, der genau das abbricht.
+In Lauf 1 stand dort „Presentation must NEVER import `data/`" — daraus
+wurde ein Hook, der genau das abbricht.
+
+**Zweiter Weg, wenn es keine Anweisungsdatei gibt** (Lauf 2, 20.10.: das
+zweite Repo hatte gar keine): Dann such eine Regel, die das Projekt
+**durch seine Struktur belegt** — eine Modulgrenze, die durchgehend
+eingehalten wird, ein Namensschema, eine Schichtung. Was ein Projekt
+überall befolgt, ist eine Regel, auch wenn sie nirgends steht.
+
+**Beleg dafür, dass es eine Regel ist:** Du findest keinen Verstoß. Eine
+„Regel" mit Ausnahmen ist eine Gewohnheit, und daraus wird kein Hook.
+
+Findet sich auch das nicht: **T3 F10 ist nicht übertragbar.** Das ist ein
+ehrliches Urteil. Eine Bitte, die wir erfunden haben, und eine Mechanik,
+die wir erfunden haben, zeigen nicht, dass Regeln erodieren — sie zeigen
+nur, dass wir zwei Zeilen geschrieben haben.
 
 ### 4 · Der Schalter für S2 und T0 ist eine benannte Konstante
 
@@ -79,17 +98,55 @@ T1 F18 verlangt ein Ticket mit nachrechenbarem Merkmal. Im Klon steht
 davon selten etwas. Zwei Wege, in dieser Reihenfolge:
 
 1. Gibt es Zugang zum Ticketsystem, sag das und hol es dort.
-2. Sonst aus der Historie: ein Commit-Betreff mit einer Vorgangsnummer
-   ist ein Ticket, das es gab. **Urteil dann: ableitbar, nicht gefunden.**
+2. Sonst aus der Historie — **aber prüf das, statt es anzunehmen.** Zähl
+   in den letzten 300 Commit-Betreffen die Vorgangsnummern. Findest du
+   welche: **ableitbar, nicht gefunden.** Findest du keine: **nicht
+   übertragbar.**
+
+   In Lauf 1 trug die Historie Nummern, in Lauf 2 keine einzige. Der
+   Rückfall war zu optimistisch formuliert.
 
 ### 6 · Prüf, ob die Testsuite überhaupt läuft — und wo sie grün ist
 
 Das ist der Teil, den man nicht lesen kann. **Führ sie aus.**
 
+**Und rate den Befehl nicht.** In Lauf 1 stand er in der Anweisungsdatei.
+In Lauf 2 gab es keine, und der naheliegende Name war falsch — das
+Bauwerkzeug kennt drei ähnliche Aufgaben, von denen nur eine existierte.
+Frag das Bauwerkzeug selbst, welche Aufgaben es hat, oder nimm den
+Befehl aus der CI. Ein geratener Testbefehl kostet einen Durchlauf.
+
 Melde drei Dinge: ob sie läuft, wie lange sie braucht, und **welche
-Bereiche grün sind**. In `bayerninfo2` liefen 410 Tests durch, 3 fielen
-— alle in derselben Datei, und älter als der Lauf. Wer das nicht misst,
+Bereiche grün sind**. In Lauf 1 liefen 410 Tests durch, 3 fielen — alle in derselben
+Datei, und älter als der Lauf. Wer das nicht misst,
 schneidet eine Demo auf einen roten Bereich.
+
+### 7 · Ein frischer Klon ist nicht lauffähig — und das ist Absicht
+
+**Der härteste Fund aus Lauf 2.** Die Testsuite lief auf dem Klon nicht.
+Nicht, weil das Projekt kaputt wäre, sondern weil ihr eine Datei fehlte,
+die **zu Recht nicht versioniert ist**: der Pfad zum Plattform-SDK.
+
+Das gilt für fast jedes Projekt mit nennenswertem Aufbau — SDK-Pfade,
+Signaturschlüssel, Zugangsdaten, `local.properties`, `.env`. Der Klon
+hat sie nicht, weil niemand sie in ein Repo legt.
+
+**Darin steckt ein Widerspruch, den du kennen musst:** Auf einem Klon zu
+arbeiten ist richtig, weil nichts im Projekt des Kunden angefasst werden
+darf. Aber genau der Klon kann die Bedarfe nicht erfüllen, die einen
+laufenden Bau brauchen.
+
+**Die Auflösung:** Lesen und Schreiben auf dem Klon. Für den **Testlauf**
+holst du die unversionierte Konfiguration aus dem Arbeitsverzeichnis
+nach — und nur sie, nur was der Bau braucht.
+
+**Zwei Dinge, die dabei gelten:**
+
+- **Nichts davon kommt in einen Bericht.** Das sind Zugangsdaten, auch
+  wenn nur ein Pfad drinsteht. Du meldest „nachgereicht", nicht was.
+- Fehlt die Konfiguration **auch im Original** — weil sie aus einem
+  Tresor kommt —, ist das eine **fehlende Voraussetzung**, kein Befund
+  über das Projekt. Melden und anhalten.
 
 ## Ausgabe
 
