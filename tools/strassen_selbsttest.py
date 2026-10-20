@@ -359,6 +359,30 @@ erwarte("E21 die Tagesdetail-Skill legt die Ablage beim Orchestrator",
         "das machst DU, nicht der Prüfer" in _tds,
         "sonst arbeitet ein Pruefer acht Minuten und verliert den Bericht")
 
+# ──── E7 · Ein Dauerzustand ist kein Befund (Lehre vom 20.10.) ──────────
+# Pruefung 6b meldete als BEFUND, dass fremdes Rot auf den Demo-Zweigen
+# mitlaeuft. Das laesst sich nie schliessen: main MUSS TS-4871 rot halten,
+# davon lebt T0 F11. Der Requisiten-Planer hat nachgewiesen, dass
+# vorfuehrprojekt_pruefen die Manifeste gar nicht liest — die Auflage ist
+# also nicht dort pruefbar. Ein Gate, das immer rot steht, liest irgendwann
+# niemand mehr.
+_vg = (KIT / "tools/vorfuehrprojekt_pruefen.py").read_text(encoding="utf-8")
+erwarte("E22 das Vorfuehrprojekt-Gate trennt Hinweise von Befunden",
+        "hinweise: list[str] = []" in _vg and "Hinweis(e)" in _vg,
+        "sonst steht es wegen eines gewollten Zustands dauerhaft rot")
+erwarte("E22b der Dauerzustand ist ein Hinweis, die Differenz ein Befund",
+        "hinweise.append(" in _vg
+        and "Dauerzustand, kein Befund" in _vg
+        and 'befunde.append(\n                    f"Zweig {zweig}: {ist - haupt}' in _vg,
+        "fremdes Rot ist gewollt; eine falsche Differenz ist es nicht")
+erwarte("E23 BEDARFE traegt die Fremdrot-Auflage an BEIDEN Demo-Bedarfen",
+        not _bed3 or _bed3.count("Differenz") >= 2,
+        "T3 F16 arbeitet auf demselben Zweig wie T7 F12")
+erwarte("E24 die dritte Spalte von T7 F12 ist entschieden",
+        not _bed3 or ("dritte Spalte" in _bed3 and "trifft das Umfeld" in _bed3),
+        "zwei der sechs Funde passen in keine der zwei alten Spalten; "
+        "T3 F16 hatte die Loesung schon")
+
 # ─────────────── F · Vertraulichkeit der Kundenberichte ──────────────────
 # Eine Regel, die niemand prueft, ist ein Wunsch. Berichte ueber ein Repo
 # in fremder Organisation nennen Rollen statt Namen.

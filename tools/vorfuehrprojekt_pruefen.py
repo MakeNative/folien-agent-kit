@@ -60,6 +60,7 @@ def main() -> int:
     praes = Path(sys.argv[2] if len(sys.argv) > 2
                  else Path.home() / "Documents/agentic-coding-guide/praesentationen")
     befunde: list[str] = []
+    hinweise: list[str] = []
     geprueft = 0
 
     if not projekt.is_dir():
@@ -167,11 +168,20 @@ def main() -> int:
                     f"main, erwartet {soll} — der Diff traegt nicht die "
                     f"gesetzten Funde")
             elif ist > soll:
-                befunde.append(
+                # Dauerzustand, kein Befund: main MUSS TS-4871 rot halten,
+                # davon lebt T0 F11. Als Befund waere das eine Meldung, die
+                # sich nie schliessen laesst — und ein Gate, das immer rot
+                # steht, liest irgendwann niemand mehr. Der Requisiten-Planer
+                # hat das am 20.10. nachgewiesen: vorfuehrprojekt_pruefen
+                # liest die Manifeste gar nicht, die Auflage ist also nicht
+                # hier pruefbar. Bleibt als Hinweis, damit die Lage sichtbar
+                # ist.
+                hinweise.append(
                     f"Zweig {zweig}: der Diff setzt {soll} Fehlschlag(e), "
-                    f"bin/test zeigt aber {ist} — {ist - soll} davon kommt "
-                    f"aus main (TS-4871) und gehoert nicht zum Diff. Das "
-                    f"Requisit muss sagen, welche rote Zeile gemeint ist")
+                    f"bin/test zeigt {ist} — {ist - soll} davon kommt aus "
+                    f"main (TS-4871). Das ist so gewollt; der Hinweis des "
+                    f"Requisits muss sagen, welche rote Zeile gemeint ist "
+                    f"(BEDARFE T7 F12, Auflage 20.10.)")
 
     # 6c Was die Verhaltens-Proben vom 20.10. am Aufbau gefunden haben
     hook = projekt / "werkzeug" / "pruefe-schreibziel.ts"
@@ -291,9 +301,12 @@ def main() -> int:
         except json.JSONDecodeError as e:
             befunde.append(f"settings.json ist kein gueltiges JSON — {e}")
 
-    print(f"{geprueft} Pruefungen, {len(befunde)} Befund(e)")
+    print(f"{geprueft} Pruefungen, {len(befunde)} Befund(e), "
+          f"{len(hinweise)} Hinweis(e)")
     for b in befunde:
         print("  ! " + b)
+    for h in hinweise:
+        print("  - " + h)
     return 1 if befunde else 0
 
 
