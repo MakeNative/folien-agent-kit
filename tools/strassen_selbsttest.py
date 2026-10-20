@@ -182,6 +182,12 @@ schneider = (KIT / "agents" / "aufgaben-schneider.md").read_text(encoding="utf-8
 erwarte("E1 Lauf 2 · zweiter Weg fuer T3 F10 ohne Anweisungsdatei",
         "durch seine Struktur belegt" in leser,
         "das zweite Repo hatte gar keine Anweisungsdatei")
+erwarte("E1b Lauf 2 · Verstoesse werden gezaehlt, drei Faelle unterschieden",
+        "Zähl immer die Verstöße" in leser and "am besten" in leser,
+        "eine Regel mit wenigen Verstoessen IST die Erosion")
+erwarte("E1c Lauf 2 · die Strukturregel wird gegengeprueft",
+        "nicht leer ist" in leser,
+        "das Verbotene muss im Projekt woanders vorkommen")
 erwarte("E2 Lauf 2 · die Historie wird geprueft, nicht angenommen",
         "statt es anzunehmen" in leser,
         "in Lauf 2 trug kein einziger Commit-Betreff eine Vorgangsnummer")
@@ -209,6 +215,21 @@ erwarte("E7 BEDARFE traegt die Auflage aus Lauf 1 zu T0 F11",
          / "BEDARFE.md").read_text(encoding="utf-8")
         if (KIT.parent.parent / "Documents/agentic-coding-guide/praesentationen"
             / "BEDARFE.md").exists() else True)
+
+# ─────────────── F · Vertraulichkeit der Kundenberichte ──────────────────
+# Eine Regel, die niemand prueft, ist ein Wunsch. Berichte ueber ein Repo
+# in fremder Organisation nennen Rollen statt Namen.
+GUIDE = Path.home() / "Documents/agentic-coding-guide/praesentationen/pruefberichte"
+if GUIDE.exists():
+    for bericht in sorted(GUIDE.glob("*-kundenprobe-lauf2.md")):
+        text = bericht.read_text(encoding="utf-8")
+        erwarte(f"F1 {bericht.name}: kein Repo-Name",
+                not re.search(r"findpenguin", text, re.I),
+                "Repo einer Kunden-Organisation")
+        erwarte(f"F2 {bericht.name}: keine Paketpfade",
+                "com." not in text and "src/commonMain" not in text)
+        erwarte(f"F3 {bericht.name}: nennt die Festlegung selbst",
+                "Rollen" in text and "Codeausschnitte" in text)
 
 # ───────────────────────────── Ergebnis ─────────────────────────────────
 print("─" * 60)

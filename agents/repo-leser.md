@@ -70,14 +70,29 @@ Pfade oder Dateinamen. Regeln über Stil oder Absicht taugen nicht.
 In Lauf 1 stand dort „Presentation must NEVER import `data/`" — daraus
 wurde ein Hook, der genau das abbricht.
 
-**Zweiter Weg, wenn es keine Anweisungsdatei gibt** (Lauf 2, 20.10.: das
-zweite Repo hatte gar keine): Dann such eine Regel, die das Projekt
-**durch seine Struktur belegt** — eine Modulgrenze, die durchgehend
-eingehalten wird, ein Namensschema, eine Schichtung. Was ein Projekt
-überall befolgt, ist eine Regel, auch wenn sie nirgends steht.
+**Zähl immer die Verstöße.** Das entscheidet, welcher der drei Fälle
+vorliegt — und der mittlere ist der beste:
 
-**Beleg dafür, dass es eine Regel ist:** Du findest keinen Verstoß. Eine
-„Regel" mit Ausnahmen ist eine Gewohnheit, und daraus wird kein Hook.
+| Lage | Was du gefunden hast | Wert für T3 F10 |
+|---|---|---|
+| Regel steht da, **keine** Verstöße | eine gelebte Regel | gut |
+| Regel steht da, **wenige** Verstöße | **die Erosion selbst, im Code des Kunden** | **am besten** |
+| Regel steht da, viele Verstöße | eine Absichtserklärung | taugt nicht |
+
+Der mittlere Fall ist der, den die Folie meint. In Lauf 1 stand in der
+Anweisungsdatei „Presentation must NEVER import `data/`" — und sechs
+Dateien taten es doch. Genau das ist T3 F10: Eine Bitte in einer Datei
+kann befolgt werden, sie **gilt** nicht. Der Trainer muss die Erosion
+nicht nachstellen, er zeigt sie.
+
+**Gibt es keine Anweisungsdatei** (Lauf 2: das zweite Repo hatte keine),
+dann such eine Regel, die das Projekt **durch seine Struktur belegt** —
+eine Modulgrenze, ein Namensschema, eine Schichtung. Hier gilt die
+Umkehrung: Ohne geschriebene Regel ist nur eine **ausnahmslos**
+eingehaltene Struktur ein Beleg. Und prüf gegen, dass sie nicht leer ist:
+Das Verbotene muss im Projekt woanders **vorkommen**. In Lauf 2 hatten
+596 Dateien eines geteilten Moduls keinen einzigen plattformspezifischen
+Import, während zwölf Dateien der Plattformschicht ihn sehr wohl trugen.
 
 Findet sich auch das nicht: **T3 F10 ist nicht übertragbar.** Das ist ein
 ehrliches Urteil. Eine Bitte, die wir erfunden haben, und eine Mechanik,
