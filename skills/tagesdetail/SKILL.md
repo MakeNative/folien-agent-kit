@@ -5,14 +5,35 @@ argument-hint: "<tag-ids, z. B. T1 T2 T3 — oder: alle>"
 ---
 
 Du orchestrierst, du baust nicht selbst (FP-01, FP-02). Wahrheit der
-Straße ist das Trio Board-Abzug → Modul → Deck; Lücken werden
-gemeldet, nie gefüllt (TD-01).
+Straße ist das Quartett Detail-Abzug → Board-Abzug → Modul → Deck;
+Lücken werden gemeldet, nie gefüllt (TD-01).
 
-1. **Abzug aktualisieren.** Vor dem ersten Writer-Lauf prüfst DU, ob
-   `praesentationen/BOARD-ABZUG.md` den aktuellen Board-Stand trägt
-   (Figma-Zugriff hat nur der Orchestrator — die Agenten lesen den
-   Abzug). Ein veralteter Abzug macht jede Prüfung wertlos; neue
-   Frames als datierten Nachtrag anhängen, wie etabliert.
+1. **Abzüge aktualisieren — und zwar ALLE Seiten des Boards.** Vor dem
+   ersten Writer-Lauf zählst DU die Seiten im Figma und vergleichst mit
+   den Abzügen, die wir haben (Figma-Zugriff hat nur der Orchestrator —
+   die Agenten lesen die Abzüge).
+
+   Stand 20.10. hat das Board drei Seiten:
+
+   | Seite | Knoten | Abzug |
+   |---|---|---|
+   | Übersicht (Wochenplan) | `0:1` | `BOARD-ABZUG.md` |
+   | Detail pro Tag | `40:2` | `DETAIL-ABZUG.md` |
+   | Modul-Katalog (Baukasten) | `179:2` | `KATALOG-ABZUG.md` |
+
+   **Die Lehre aus dem 20.10.:** „Detail pro Tag" war nie abgezogen,
+   obwohl sie wörtlich die Ebene beschreibt, die diese Straße schreibt.
+   Rund die Hälfte der 110 gemeldeten Lücken stand dort schon
+   beantwortet. Findest du eine Seite ohne Abzug, **hältst du an und
+   ziehst sie, bevor ein Writer startet** — ein fehlender Abzug
+   erzeugt Lücken, die keine sind, und das fällt erst Wochen später auf.
+
+   Eine Seite ist zu groß für einen Lesevorgang (48 KB Grenze): lies je
+   Wochen-Frame, und sortiere je Tageskarte statt über die ganze Seite,
+   sonst zerfällt die Struktur in Textsalat.
+
+   Ein veralteter Abzug macht jede Prüfung wertlos; neue Frames als
+   datierten Nachtrag anhängen, wie etabliert.
 2. **Writer.** Spawn `tagesdetail-writer` je Welle (4–6 Tage je
    Instanz, nach Wochen gruppiert — W0+S, W1, W2, W3, W4). Im Prompt:
    die Tag-IDs, die zugehörigen Modul-/Deck-Dateien und die Liste der

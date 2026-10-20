@@ -224,6 +224,41 @@ erwarte("E7c der repo-leser trennt beide Arten von rot",
         "Unterscheide zwei Arten von rot" in leser
         and "Melde beide getrennt" in leser)
 
+# ──────── E2 · Das Board hat DREI Seiten (Lehre vom 20.10.) ─────────────
+# „Detail pro Tag" war nie abgezogen, obwohl sie woertlich die Ebene
+# beschreibt, die die Tagesdetail-Strasse schreibt. Rund die Haelfte der
+# 110 gemeldeten Luecken stand dort schon beantwortet. Diese Erwartungen
+# halten fest, dass die Strasse die Seite kennt — und dass sie
+# Widersprueche zwischen den Board-Seiten als Befund behandelt.
+def _flach(pfad):
+    """Markdown-Umbrueche weg: ein Satz darf ueber zwei Zeilen stehen."""
+    return " ".join((KIT / pfad).read_text(encoding="utf-8").split())
+
+_tdw = _flach("agents/tagesdetail-writer.md")
+_btp = _flach("agents/board-treue-pruefer.md")
+_tds = _flach("skills/tagesdetail/SKILL.md")
+
+erwarte("E8 der tagesdetail-writer kennt DETAIL-ABZUG.md",
+        "DETAIL-ABZUG.md" in _tdw,
+        "sonst belegt er die Durchfuehrungs-Ebene wieder aus Deck und Modul")
+erwarte("E8b und liest sie ZUERST, nicht zuletzt",
+        "Fang hier an" in _tdw and "die erste Quelle" in _tdw)
+erwarte("E8c der writer entscheidet Board-Widersprueche nicht selbst",
+        "ist das ein Befund, keine Wahl" in _tdw and "nennst beide Wortlaute" in _tdw)
+erwarte("E9 der board-treue-pruefer prueft BEIDE Board-Seiten",
+        "DETAIL-ABZUG.md" in _btp and "Pr\u00fcf beide Seiten" in _btp,
+        "ein Befund aus nur der Uebersicht ist ein Fehlalarm")
+erwarte("E9b und meldet Widersprueche zwischen den Seiten als Befund",
+        "Widerspr\u00fcche zwischen den Board-Seiten" in _btp)
+erwarte("E10 die Skill zaehlt die Board-Seiten, statt eine zu raten",
+        all(k in _tds for k in ("0:1", "40:2", "179:2")),
+        "drei Knoten-IDs, damit eine vierte Seite auffaellt")
+erwarte("E10b die Skill haelt an, wenn eine Seite keinen Abzug hat",
+        "h\u00e4ltst du an" in _tds)
+erwarte("E10c die 48-KB-Grenze und die Sortierung je Tageskarte stehen drin",
+        "48 KB" in _tds and "je Tageskarte" in _tds,
+        "sonst zerfaellt die Struktur in Textsalat")
+
 # ─────────────── F · Vertraulichkeit der Kundenberichte ──────────────────
 # Eine Regel, die niemand prueft, ist ein Wunsch. Berichte ueber ein Repo
 # in fremder Organisation nennen Rollen statt Namen.

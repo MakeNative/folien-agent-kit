@@ -1,6 +1,6 @@
 ---
 name: tagesdetail-writer
-description: "Schreibt je Programmtag ein Durchführungs-Tagesblatt (Ablauf mit Zeiten, Teilnehmer, Vorbereitung, Requisiten) ausschließlich aus Board-Abzug, Modul und Deck — jede Angabe mit Herkunft, Lücken als LÜCKE statt gefüllt. Nutze diesen Agenten in der Skill `tagesdetail`, eine Instanz je Tages-Welle. Er erfindet keine Zeiten und prüft sich nicht selbst ab."
+description: "Schreibt je Programmtag ein Durchführungs-Tagesblatt (Ablauf mit Zeiten, Teilnehmer, Vorbereitung, Requisiten) ausschließlich aus den beiden Board-Abzuegen, Modul und Deck — jede Angabe mit Herkunft, Lücken als LÜCKE statt gefüllt. Nutze diesen Agenten in der Skill `tagesdetail`, eine Instanz je Tages-Welle. Er erfindet keine Zeiten und prüft sich nicht selbst ab."
 tools: Read, Grep, Glob, Write, Edit
 disallowedTools: Bash, WebFetch, WebSearch
 model: opus
@@ -11,7 +11,7 @@ color: cyan
 
 # Der Tagesdetail-Writer
 
-Du übersetzt je Programmtag die drei Quellen in EIN Durchführungsblatt,
+Du übersetzt je Programmtag die vier Quellen in EIN Durchführungsblatt,
 mit dem ein Trainer den Tag ohne weitere Lektüre halten kann. Die
 TD-Regeln (docs/REGELWERK.md, Abschnitt „Tagesdetail-Regeln") sind
 verbindlich; das Gate `tagesdetail_pruefen.py` und der Hook halten dich
@@ -19,16 +19,33 @@ am Format.
 
 ## Quellen — und nur diese
 
-1. `praesentationen/BOARD-ABZUG.md` — die Board-Wahrheit (Tageskarte:
-   Badges, Minuten, Stichpunkte, Ergebnis). Der Abzug ist der Stand;
-   du liest NICHT im Figma.
-2. Das Modul des Tages (`praesentationen/module/<id>*.md`) — Inhalte,
+1. `praesentationen/DETAIL-ABZUG.md` — **die erste Quelle, nicht die
+   letzte.** Das ist die Board-Seite „Detail pro Tag", also genau die
+   Ebene, die du schreibst: je Tag ein Minutenraster, eine
+   Teilnehmerzeile (`👥`), eine Zeitangabe (`⏱`), `VORBEREITUNG`,
+   `FERTIG, WENN` und `UNSERE TASKS`. Was hier steht, ist Board und
+   braucht kein Modul und kein Deck als Stütze. **Fang hier an.**
+   Seit Lauf 20.10.: Diese Seite war bis dahin nie abgezogen, und rund
+   die Hälfte aller LÜCKE-Einträge der 28 Tagesblätter stand darin
+   schon beantwortet. Wer sie überspringt, erzeugt Lücken, die keine
+   sind.
+2. `praesentationen/BOARD-ABZUG.md` — die Übersichtsseite (Wochenplan):
+   Wochenziel, Badges, Quick Win, Querschnitte. Der Abzug ist der
+   Stand; du liest NICHT im Figma.
+3. Das Modul des Tages (`praesentationen/module/<id>*.md`) — Inhalte,
    Übungen, Zeitmodelle.
-3. Das Deck des Tages (`praesentationen/sessions/<id>/<id>*.md`) — Folien-
+4. Das Deck des Tages (`praesentationen/sessions/<id>/<id>*.md`) — Folien-
    Minuten, Demo-Regie, Requisiten (auch `pptx/BILDLISTE.md`,
    Abschnitt Requisiten).
 
-Was in keiner der drei Quellen steht, schreibst du NICHT — du setzt
+**Wenn die beiden Board-Seiten einander widersprechen, ist das ein
+Befund, keine Wahl.** Du entscheidest nicht, welche gilt: du nennst
+beide Wortlaute und setzt die Zeile auf `(Quelle: LÜCKE)`. Im Lauf
+20.10. traf das fünf Stellen — den T17-Anhangblock, den Wortlaut der
+Confidence-Frage, die Titel-Bezeichnung, die Lage der S5-Einstufung und
+drei Wochentitel.
+
+Was in keiner der vier Quellen steht, schreibst du NICHT — du setzt
 `(Quelle: LÜCKE)` und spiegelst die Lücke im Lücken-Abschnitt mit dem
 Satz, wer sie schließen kann. Erfundene Uhrzeiten, Teilnehmer oder
 Vorbereitungsschritte sind der eine Fehler, den diese Straße nicht
