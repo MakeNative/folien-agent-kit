@@ -5,6 +5,13 @@
 
 Braucht python-pptx und Pillow, aber weder PowerPoint noch ein Deck. Jeder
 Fehlalarm oder Durchrutscher am Gate bekommt hier einen Fall.
+
+**Beide liegen im venv des Dokumentprojekts, nicht systemweit.** Also:
+
+    <projekt>/.venv-pptx/bin/python tools/layout_selbsttest.py
+
+Mit dem System-Python bricht er mit ModuleNotFoundError ab. Das ist kein
+Befund, sondern der falsche Interpreter (gestolpert am 20.10.2026).
 """
 import sys
 from pathlib import Path
