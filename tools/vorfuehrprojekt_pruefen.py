@@ -23,6 +23,7 @@ from __future__ import annotations
 import json
 import re
 import subprocess
+import tempfile
 import sys
 from pathlib import Path
 
@@ -121,6 +122,95 @@ def main() -> int:
         elif offen.group(1) != "1":
             befunde.append(f"{offen.group(1)} Proben offen, erwartet ist "
                            f"genau 1 (die, die T0 F11 gruen macht)")
+
+    # 6b Demo-Zweige: fremdes Rot darf nicht als Diff-Fund durchgehen
+    #
+    # Lehre vom 20.10.: Auf vorlauf/adresspruefung meldet bin/test ZWEI
+    # Fehlschlaege — den gesetzten Korrektheitsfund des Diffs und den
+    # absichtlichen TS-4871 von main. In der Pruef-Demo (T7 F12) sieht der
+    # Teilnehmer zwei rote Zeilen und schreibt beide dem Diff zu. Gemessen
+    # wird deshalb die DIFFERENZ zu main; zusaetzlich wird gemeldet, wenn
+    # fremdes Rot mitlaeuft, denn dann muss das Requisit es benennen.
+    ZWEIGE = {"vorlauf/adresspruefung": 1, "vorlauf/queue-uebersicht": 0}
+
+    def offene_proben(wurzel):
+        """Zahl der offenen Proben, oder None wenn bin/test nichts meldet."""
+        r = subprocess.run([str(Path(wurzel) / "bin" / "test")], cwd=wurzel,
+                           capture_output=True, text=True, timeout=180)
+        m = re.search(r"(\d+) Probe\(n\) offen", r.stdout)
+        return int(m.group(1)) if m else None
+
+    if pruefbefehl.exists() and (projekt / ".git").exists():
+        haupt = offene_proben(projekt)
+        for zweig, soll in ZWEIGE.items():
+            geprueft += 1
+            with tempfile.TemporaryDirectory() as tmp:
+                klon = Path(tmp) / "k"
+                if subprocess.run(["git", "clone", "--no-hardlinks", "-q",
+                                   str(projekt), str(klon)],
+                                  capture_output=True).returncode != 0:
+                    befunde.append(f"Zweig {zweig}: Klon fehlgeschlagen, "
+                                   f"nicht geprueft")
+                    continue
+                if subprocess.run(["git", "checkout", "-q", zweig], cwd=klon,
+                                  capture_output=True).returncode != 0:
+                    befunde.append(f"Zweig {zweig} fehlt — T7 F12 braucht ihn")
+                    continue
+                ist = offene_proben(klon)
+            if ist is None or haupt is None:
+                befunde.append(f"Zweig {zweig}: bin/test meldet keine "
+                               f"Probenbilanz")
+                continue
+            if ist - haupt != soll:
+                befunde.append(
+                    f"Zweig {zweig}: {ist - haupt} Fehlschlag(e) mehr als "
+                    f"main, erwartet {soll} — der Diff traegt nicht die "
+                    f"gesetzten Funde")
+            elif ist > soll:
+                befunde.append(
+                    f"Zweig {zweig}: der Diff setzt {soll} Fehlschlag(e), "
+                    f"bin/test zeigt aber {ist} — {ist - soll} davon kommt "
+                    f"aus main (TS-4871) und gehoert nicht zum Diff. Das "
+                    f"Requisit muss sagen, welche rote Zeile gemeint ist")
+
+    # 6c Was die Verhaltens-Proben vom 20.10. am Aufbau gefunden haben
+    hook = projekt / "werkzeug" / "pruefe-schreibziel.ts"
+    geprueft += 1
+    if hook.exists():
+        h = hook.read_text(encoding="utf-8")
+        if "**/*" not in h:
+            befunde.append("der Schutz-Hook traegt das Muster \"**/*\" nicht "
+                           "mehr — T4 F16 braucht den zu breiten Hook")
+        # Die Meldung muss sagen, WELCHES Muster traf. Vorher nannte sie
+        # immer berichte/, auch wenn "**/*" gegriffen hatte — und verdeckte
+        # damit genau den Punkt, den T4 F16 zeigen will.
+        if "Dateien unter berichte/ werden nicht" in h:
+            befunde.append("der Schutz-Hook meldet immer \"berichte/\", auch "
+                           "wenn \"**/*\" traf — die Meldung muss das "
+                           "Muster nennen (Probe vom 20.10.)")
+
+    btest = projekt / "bin" / "test"
+    geprueft += 1
+    if btest.exists():
+        b = btest.read_text(encoding="utf-8")
+        # Eine Probendatei deckt drei Quelldateien ab. Die Namenskonvention
+        # test/<basename>.test.ts fand deshalb nur fuer orderNotifier.ts
+        # etwas und meldete sonst "Could not find" — eine ungepruefte Datei
+        # sah gruen aus. T0 F11 und der aufgaben-schneider verlassen sich
+        # darauf.
+        if "keine Probe deckt" not in b:
+            befunde.append("bin/test sagt nicht, wenn keine Probe eine "
+                           "Quelldatei abdeckt — T0 F11 verlaesst sich "
+                           "darauf (Probe vom 20.10.)")
+
+    claudemd = projekt / "CLAUDE.md"
+    geprueft += 1
+    if claudemd.exists():
+        c = " ".join(claudemd.read_text(encoding="utf-8").split())
+        if "T1 Folie 14" not in c or "T3 Folie 14" not in c:
+            befunde.append("CLAUDE.md nennt die Plan-Modus-Demos nicht, vor "
+                           "denen der Hook aus muss (T1 F14, T3 F14) — im "
+                           "Plan-Modus wird die Plandatei geschrieben")
 
     # 7 zweite Domaene
     zd = projekt / ZWEITE_DOMAENE

@@ -259,6 +259,53 @@ erwarte("E10c die 48-KB-Grenze und die Sortierung je Tageskarte stehen drin",
         "48 KB" in _tds and "je Tageskarte" in _tds,
         "sonst zerfaellt die Struktur in Textsalat")
 
+# ──── E3 · Fremdes Rot auf einem Demo-Zweig (Lehre vom 20.10.) ──────────
+# Auf vorlauf/adresspruefung meldet bin/test zwei Fehlschlaege: den
+# gesetzten Korrektheitsfund und den absichtlichen TS-4871 von main. Die
+# Differenz war richtig, der Eindruck im Raum waere falsch gewesen.
+_asch = _flach("agents/aufgaben-schneider.md")
+_vgate = (KIT / "tools/vorfuehrprojekt_pruefen.py").read_text(encoding="utf-8")
+
+erwarte("E11 der Schneider zaehlt Fehlschlaege als Differenz, nicht absolut",
+        "als Differenz, nie absolut" in _asch and "zweimal" in _asch,
+        "einmal auf dem Hauptzweig, einmal auf dem Diff-Zweig")
+erwarte("E11b und laesst den Trainer die fremde rote Zeile vorher benennen",
+        "welche rote Zeile gemeint ist" in _asch
+        and "Kundenprojekt ist das der Normalfall" in _asch)
+erwarte("E12 das Vorfuehrprojekt-Gate misst die Demo-Zweige gegen main",
+        "vorlauf/adresspruefung" in _vgate and "vorlauf/queue-uebersicht" in _vgate
+        and "DIFFERENZ zu main" in _vgate,
+        "sonst geht fremdes Rot als Diff-Fund durch")
+erwarte("E12b und das Gate misst im Wegwerf-Klon, nicht im Arbeitsbaum",
+        "TemporaryDirectory" in _vgate and "no-hardlinks" in _vgate)
+_bed2 = _BED.read_text(encoding="utf-8") if _BED.exists() else ""
+erwarte("E13 BEDARFE traegt die Auflage zu T7 F12",
+        not _bed2 or ("Gezählt wird die **Differenz**" in _bed2
+                      and "fremdes Rot der Normalfall" in _bed2))
+
+# ──── E4 · Was die vier Verhaltens-Proben ergaben (20.10.) ──────────────
+# Vier von vier bestanden auf den Buchstaben, keine ohne Befund. Dreimal
+# war der Befund nicht das Modellverhalten, sondern die Umgebung.
+_bed3 = " ".join(_BED.read_text(encoding="utf-8").split()) if _BED.exists() else ""
+
+erwarte("E14 BEDARFE: 'ohne Material' heisst auch ohne Connectoren (S2 F7)",
+        not _bed3 or ("**ohne Connectoren**" in _bed3
+                      and "Slack und Gmail" in _bed3),
+        "Lauf eins suchte in echten Postfaechern — der Unterschied zwischen "
+        "den Laeufen erklaerte sich dann durch Werkzeugzugriff")
+erwarte("E15 BEDARFE: die Plan-Modus-Demos brauchen den Hook aus",
+        not _bed3 or _bed3.count("mit `/hooks` aus sein") >= 2,
+        "T1 F14 und T3 F14 — im Plan-Modus wird die Plandatei geschrieben")
+erwarte("E16 BEDARFE: T7 F12 verlangt MINDESTENS die drei Funde",
+        not _bed3 or ("**mindestens** die drei meldet" in _bed3
+                      and "meldete sechs" in _bed3),
+        "die Zahl festnageln laesst den Trainer dastehen, als stimme sein "
+        "Material nicht")
+erwarte("E16b BEDARFE: T7 F12 nennt die Funde, die in keine Spalte passen",
+        not _bed3 or "passen in keine der zwei Spalten" in _bed3,
+        "fehlende Testabdeckung und irreführende Commit-Nachricht sind "
+        "weder Korrektheit noch Geschmack")
+
 # ─────────────── F · Vertraulichkeit der Kundenberichte ──────────────────
 # Eine Regel, die niemand prueft, ist ein Wunsch. Berichte ueber ein Repo
 # in fremder Organisation nennen Rollen statt Namen.

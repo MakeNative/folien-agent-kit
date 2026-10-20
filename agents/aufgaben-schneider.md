@@ -78,6 +78,21 @@ nennt — nicht ungefähr diese. Setz sie an die Zeilennummern, die das
 Bild zeigt, und **stell jeden Fund nach**: Der Zählfehler muss wirklich
 falsch zählen.
 
+**Zähl die Fehlschläge als Differenz, nie absolut.** Fahr die Testsuite
+zweimal: einmal auf dem Hauptzweig, einmal auf dem Diff-Zweig. Die
+Differenz muss den gesetzten Funden entsprechen — sonst trägt der Diff
+etwas anderes, als das Bild behauptet.
+
+**Und sag dem Trainer, welche rote Zeile gemeint ist.** Fand sich auf dem
+Vorführprojekt am 20.10.: Auf `vorlauf/adresspruefung` meldet `bin/test`
+zwei Fehlschläge — den gesetzten Korrektheitsfund und den absichtlichen
+`TS-4871` vom Hauptzweig. Die Differenz war richtig, der Eindruck im Raum
+wäre falsch gewesen: zwei rote Zeilen, und der Teilnehmer schreibt beide
+dem Diff zu. In einem Kundenprojekt ist das der Normalfall, nicht die
+Ausnahme — dort trägt fast jede Suite vorbestehende Fehlschläge. Also in
+den Hinweis des Requisits: wie viele Zeilen rot sind, welche zum Diff
+gehört, und dass der Trainer die andere **vorher** benennt.
+
 ## Der Fehler aus Lauf 1, den du nicht wiederholst
 
 Der erste Schnitt wählte eine Zieldatei, deren Testbereich **drei
