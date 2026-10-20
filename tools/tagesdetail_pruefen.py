@@ -45,7 +45,12 @@ TAG_IDS = {"W0", "W0-F", "T0",
            *{f"S{i}" for i in range(1, 6)}, *{f"T{i}" for i in range(1, 21)}}
 ARTEN = ("Live-Session", "Gruppen-Session", "Workshop", "Eigenarbeit",
          "Check-in", "Messung", "GF-Report", "Abschlusstermin", "intern")
-ROLLEN = ("Entwickler", "Trainer", "Team-Lead", "GF", "intern")
+# "Gruppe" ist seit dem 20.10. dabei: Die Starter-Woche laeuft im
+# Gruppenformat, und die Board-Karten sagen "Gruppe (alle L0/L1) + wir".
+# Ohne den Wert mussten vier S-Blaetter "Entwickler, Trainer" schreiben
+# und den Board-Wortlaut als Luecke fuehren — sechs Luecken, deren
+# Ursache mein Vokabular war und nicht das Material.
+ROLLEN = ("Entwickler", "Gruppe", "Trainer", "Team-Lead", "GF", "intern")
 KOPF_FELDER = ("Board-Zeit", "Plan-Zeit", "Badge", "Art", "Teilnehmer",
                "Modul", "Deck", "Rolle", "Level-Ziel")
 KOPF_RE = re.compile(r"^(" + "|".join(KOPF_FELDER) + r"):\s*(.+?)\s*$")

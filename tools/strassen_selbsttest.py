@@ -383,6 +383,85 @@ erwarte("E24 die dritte Spalte von T7 F12 ist entschieden",
         "zwei der sechs Funde passen in keine der zwei alten Spalten; "
         "T3 F16 hatte die Loesung schon")
 
+# ──── E8 · Gate-Vokabular ist keine Materialgrenze (20.10.) ─────────────
+# Die ROLLEN-Liste kannte "Gruppe" nicht. Vier Starter-Blaetter mussten
+# deshalb "Entwickler, Trainer" schreiben und den Board-Wortlaut als Luecke
+# fuehren — sechs Luecken, deren Ursache mein Vokabular war und nicht das
+# Material. Wer eine Luecke sieht, prueft zuerst, ob das Werkzeug sie macht.
+erwarte("E25 das Rollen-Vokabular kennt die Gruppe",
+        '"Gruppe"' in _tdg,
+        "die Starter-Woche laeuft im Gruppenformat, die Board-Karten sagen "
+        "'Gruppe (alle L0/L1) + wir'")
+
+# ──── E9 · Zwei eigene Fehlentscheidungen, von Writern widerlegt ─────────
+# Beide gemeldet statt stillschweigend angepasst — genau dafuer ist die
+# Regel da, dass ein Writer Widersprueche meldet und nicht entscheidet.
+_pe = (KIT.parent.parent / "Documents/agentic-coding-guide/praesentationen"
+       / "PROGRAMM-ENTSCHEIDUNGEN.md")
+_pet = " ".join(_pe.read_text(encoding="utf-8").split()) if _pe.exists() else ""
+erwarte("E26 die Korrektur der T17-Rechnung steht im Register",
+        not _pet or ("Er läuft **97**" in _pet and "148 Minuten" in _pet),
+        "141 - 90 - 44 war falsch: der M9-Teil laeuft 97, die 7 Minuten sind "
+        "schon der gedeckte Ueberzug")
+erwarte("E27 C1 ist auf 'Deck hat im Slot NICHTS' eingegrenzt",
+        not _pet or "nur, wo das Deck im selben Slot NICHTS hat" in _pet,
+        "sonst zaehlt ein Board-Block doppelt, den das Deck mit anderem "
+        "Inhalt schon fuellt")
+erwarte("E28 die Starter-Woche ist von 'Win der Woche' ausgenommen",
+        not _pet or "Starter-Woche nicht" in _pet,
+        "der erste Pulse laeuft am ENDE von S5 — vorher gibt es das Feld "
+        "'Bester Moment der Woche' nicht")
+
+# ──── E10 · Der WIP-Nachzug ist vollstaendig (20.10.) ───────────────────
+# PE-2026-10-18b stand zwei Tage im Register, ohne dass das Material ihm
+# folgte. Vier Deck-/Modulstellen lehrten weiter "zwei bis drei" und den Ton
+# "die Zahl ist gesetzt, geh zur Programmleitung" — genau den, den die
+# Entscheidung abgeschafft hat. Dazu eine Grafik, die die widerrufene Zahl
+# auf die Leinwand brachte, und eine Spezifikationszeile, an der das
+# Folien-Gate haengt.
+_P = KIT.parent.parent / "Documents/agentic-coding-guide/praesentationen"
+
+def _flach_p(rel):
+    f = _P / rel
+    return " ".join(f.read_text(encoding="utf-8").split()) if f.exists() else ""
+
+# Geprueft wird die LEHRE, nicht das Protokoll: Ein Deck darf die alte
+# Fassung zitieren, wenn es die Aenderung dokumentiert (Abweichungen,
+# Herkunftszeilen, Board-Kontrast) — genau das verlangt die Entscheidung
+# sogar, damit der Widerspruch zum Board sichtbar bleibt. Verboten ist die
+# Behauptung.
+for _rel, _name in (
+    ("sessions/T12/T12-parallel.md", "Deck T12"),
+    ("sessions/T12/M06-parallelisieren.md", "Modul M6"),
+    ("sessions/T12/P-T12.md", "Paper T12"),
+    ("sessions/T17/T17b-remote.md", "Deck T17b"),
+    ("sessions/T17/P-T17b.md", "Paper T17b"),
+):
+    _s = _flach_p(_rel)
+    erwarte(f"E29 {_name} behauptet die Zahl nicht mehr als Setzung",
+            not _s or "ist eine Setzung des Programms" not in _s,
+            "PE-2026-10-18b: keine Folie und kein Blatt schreibt dem "
+            "Teilnehmer seine Zahl vor")
+    erwarte(f"E29b {_name} traegt die Daumenregel",
+            not _s or "Daumenregel" in _s)
+
+# Diese zwei tragen keinen Lehrtext und muessen die neue Zahl selbst fuehren.
+for _rel, _name in (
+    ("sessions/T17/SPEZIFIKATION-T17b.md", "Spezifikation T17b"),
+    ("grafiken/T12-f4-material-wartezeit.mmd", "Grafik T12 F4"),
+):
+    _s = _flach_p(_rel)
+    erwarte(f"E29c {_name} fuehrt die neue Spanne",
+            not _s or ("zwei bis fünf" in _s or "2 bis 5" in _s),
+            "die Spezifikation haengt am Folien-Gate, die Grafik steht auf "
+            "der Leinwand")
+
+erwarte("E30 die Grafik zu T12 F9 traegt die Daumenregel",
+        not _flach_p("grafiken/T12-f4-material-wartezeit.mmd")
+        or "Daumenregel 2 bis 5" in _flach_p("grafiken/T12-f4-material-wartezeit.mmd"),
+        "sie war der letzte Ort, an dem die widerrufene Zahl auf der "
+        "Leinwand stand")
+
 # ─────────────── F · Vertraulichkeit der Kundenberichte ──────────────────
 # Eine Regel, die niemand prueft, ist ein Wunsch. Berichte ueber ein Repo
 # in fremder Organisation nennen Rollen statt Namen.
