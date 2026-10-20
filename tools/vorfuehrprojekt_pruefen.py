@@ -164,6 +164,8 @@ def main() -> int:
         ("T3-anatomie", 10): "werkzeug/pruefe-schreibziel.ts",
         ("T3-anatomie", 14): "src/services/orderNotifier.ts",
         ("T3-anatomie", 16): "src/services/queueOverview.ts",
+        ("T3-anatomie", 1): "laeufe/erosion-transkript.md",
+        ("S3-datenzugriff", 23): "handzettel/einrichtung-ticketspur.md",
         ("T4-pipelines", 16): "berichte/wegwerf.txt",
         ("T7-evaluieren", 7): "laeufe/lauf-a-bericht.md",
         ("T7-evaluieren", 12): "src/services/addressCheck.ts",
