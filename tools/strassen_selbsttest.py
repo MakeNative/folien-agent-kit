@@ -209,12 +209,20 @@ erwarte("E5d Lauf 2 · die nachgereichte Konfiguration kommt in keinen Bericht",
 erwarte("E6 beide Agenten arbeiten auf einem Klon",
         "Klon" in leser and "Klon" in schneider,
         "nie im Arbeitsverzeichnis des Kunden")
+_BED = (KIT.parent.parent / "Documents/agentic-coding-guide/praesentationen"
+        / "BEDARFE.md")
+_bed = _BED.read_text(encoding="utf-8") if _BED.exists() else ""
 erwarte("E7 BEDARFE traegt die Auflage aus Lauf 1 zu T0 F11",
-        "vorher einmal gefahren und grün" in
-        (KIT.parent.parent / "Documents/agentic-coding-guide/praesentationen"
-         / "BEDARFE.md").read_text(encoding="utf-8")
-        if (KIT.parent.parent / "Documents/agentic-coding-guide/praesentationen"
-            / "BEDARFE.md").exists() else True)
+        not _bed or ("vorher einmal gefahren" in _bed
+                     and "Fehlschlag darin muss der des" in _bed),
+        "Zieldatei vorher gefahren, jeder Fehlschlag darin gehoert zum Ticket")
+erwarte("E7b die Auflage unterscheidet fremdes Rot von dem des Tickets",
+        not _bed or ("TS-4871" in _bed and "erwünscht" in _bed),
+        "sonst widerspricht die Regel dem Vorfuehrprojekt, das genau eine "
+        "rote Probe absichtlich mitbringt")
+erwarte("E7c der repo-leser trennt beide Arten von rot",
+        "Unterscheide zwei Arten von rot" in leser
+        and "Melde beide getrennt" in leser)
 
 # ─────────────── F · Vertraulichkeit der Kundenberichte ──────────────────
 # Eine Regel, die niemand prueft, ist ein Wunsch. Berichte ueber ein Repo

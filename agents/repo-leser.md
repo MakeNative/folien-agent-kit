@@ -136,6 +136,12 @@ Bereiche grün sind**. In Lauf 1 liefen 410 Tests durch, 3 fielen — alle in de
 Datei, und älter als der Lauf. Wer das nicht misst,
 schneidet eine Demo auf einen roten Bereich.
 
+**Unterscheide zwei Arten von rot.** Fremdes Rot — Fehlschläge, die schon vor
+dem Auftrag da waren und nichts mit ihm zu tun haben — ist das Problem: in der
+Session sieht es aus, als hätte der Agent etwas kaputtgemacht. Rot, das der
+Auftrag selbst erzeugt, ist dagegen genau das Ziel: das ist der Test, den die
+Demo grün macht. Melde beide getrennt, nicht als eine Zahl.
+
 ### 7 · Ein frischer Klon ist nicht lauffähig — und das ist Absicht
 
 **Der härteste Fund aus Lauf 2.** Die Testsuite lief auf dem Klon nicht.
