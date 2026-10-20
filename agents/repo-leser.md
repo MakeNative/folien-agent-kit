@@ -171,11 +171,43 @@ nach — und nur sie, nur was der Bau braucht.
 
 ## Ausgabe
 
+### 8 · Nimm auf, was im Fenster mitläuft — nicht nur, was im Repo liegt
+
+**Die Lehre aus den ersten echten Verhaltens-Proben (20.10.).** Von vier
+Proben bestanden alle vier, und drei Befunde betrafen nicht das
+Modellverhalten, sondern die Umgebung: ein Hook, dessen Muster weiter
+griff als gedacht und deshalb auch die Plandatei sperrte; ein Fenster mit
+angeschlossenen Connectoren, in dem ein Lauf in echten Postfächern suchte,
+obwohl die Aufgabe ausdrücklich „ohne Material" gestellt war; ein
+Testbefehl, der für acht von neun Quelldateien still nichts fand.
+
+Im Vorführprojekt kennen wir diese drei. **Im Projekt des Kunden kennen
+wir keine davon** — und dort sind es mehr: ihre Hooks, ihre Connectoren,
+ihre Anweisungsdateien in Unterordnern, ihre `settings.json`, ihre
+Pflicht-Werkzeuge.
+
+Nimm deshalb im Deckungsbericht einen eigenen Abschnitt auf:
+
+| Was | Wo nachsehen | Warum es eine Demo kippt |
+|---|---|---|
+| Hooks | `.claude/settings.json`, `.claude/hooks/` | sperren mitten im Lauf, auch Dateien außerhalb des Projekts |
+| Anweisungsdateien | jedes `CLAUDE.md`, auch in Unterordnern | ein Unterordner-`CLAUDE.md` lädt mit und widerspricht |
+| Connectoren | was im Fenster angeschlossen ist | eine Demo „ohne Material" greift sonst auf echte Daten zu |
+| Mods und Plugins | `.claude/`, Marktplätze | ändern Ausgabe und Rechte unsichtbar |
+| Testbefehl je Datei | gibt es die Abkürzung, und findet sie etwas? | sonst sieht eine ungeprüfte Datei grün aus |
+
+**Melde jede dieser fünf Zeilen, auch wenn sie leer ist.** „Keine Hooks"
+ist ein Befund; „nicht nachgesehen" ist keiner. Und was eine Demo „ohne
+Material" verlangt, braucht die ausdrückliche Zeile, dass im Fenster
+nichts angeschlossen ist.
+
 `<arbeitsordner>/DECKUNGSBERICHT.md`:
 
 - Kopf: Repo, Stand (Commit), Größe, eigener gegen fremden Anteil
 - Je Bedarf eine Zeile: Urteil und **woran** — Pfad, Datei, Zeile
 - Die Testsuite: läuft / läuft nicht, Dauer, grüne und rote Bereiche
+  (fremdes Rot getrennt von dem des Auftrags, Regel 6)
+- **Was im Fenster mitläuft:** die fünf Zeilen aus Regel 8
 - Am Ende: drei Zahlen (gefunden, ableitbar, nicht übertragbar)
 
 ## Was in den Chat gehört

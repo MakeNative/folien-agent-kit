@@ -190,6 +190,21 @@ def pruefe_blatt(pfad: Path, wurzel: Path | None) -> list[str]:
         b.append(f"TD-G5 {pfad.name}: '{name}' ist keine Board-Tag-ID "
                  f"(W0, W0-F, T0, S1–S5, T1–T20)")
 
+    # TD-G9 · Die Kopie in der Sitzungsmappe darf nicht hinter dem Blatt
+    # zurueckbleiben. Die Mappe ist das, was der Trainer in die Hand
+    # bekommt — eine stille alte Kopie dort ist schlimmer als keine.
+    # Gefunden am 20.10.: nach dem Nachziehen wichen 25 von 28 Kopien ab.
+    if pfad.stem == "TAGESBLATT":
+        for kopie in sorted(pfad.parent.glob(
+                "FUER-DEN-TRAINER/*/TAGESBLATT.md")):
+            try:
+                if kopie.read_text(encoding="utf-8") != text:
+                    b.append(f"TD-G9 {name}: die Kopie in "
+                             f"{kopie.parent.name} weicht vom Blatt ab — "
+                             f"Mappe neu bauen (./bau {name})")
+            except OSError as e:
+                b.append(f"TD-G9 {name}: Kopie nicht lesbar ({e})")
+
     kopfzeilen, teile = abschnitte(text)
     kopf: dict[str, str] = {}
     for z in kopfzeilen:
@@ -467,7 +482,22 @@ def main() -> int:
     if not ziel.exists():
         print(f"Nicht gefunden: {ziel}")
         return 2
-    dateien = sorted(ziel.glob("*.md")) if ziel.is_dir() else [ziel]
+    if ziel.is_dir():
+        # Seit dem Umzug am 19.10.2026 liegt jedes Blatt in
+        # sessions/<TAG>/TAGESBLATT.md. Der alte Glob "*.md" fand im
+        # sessions-Ordner deshalb NULL Dateien und meldete "0 Befunde" —
+        # ein gruenes Gate ueber nichts. Gefunden am 20.10.
+        dateien = sorted(ziel.glob("*/TAGESBLATT.md"))
+        if not dateien:
+            dateien = sorted(ziel.glob("*.md"))      # alte Form <TAG>.md
+        if not dateien and (ziel / "TAGESBLATT.md").exists():
+            dateien = [ziel / "TAGESBLATT.md"]       # ein Session-Ordner
+        if not dateien:
+            print(f"Keine Tagesblaetter unter {ziel} gefunden — "
+                  f"erwartet <TAG>/TAGESBLATT.md oder <TAG>.md")
+            return 2
+    else:
+        dateien = [ziel]
     w = gemeinsam.wurzel(ziel.resolve())
     befunde: list[str] = []
     for d in dateien:

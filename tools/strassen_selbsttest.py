@@ -306,6 +306,33 @@ erwarte("E16b BEDARFE: T7 F12 nennt die Funde, die in keine Spalte passen",
         "fehlende Testabdeckung und irreführende Commit-Nachricht sind "
         "weder Korrektheit noch Geschmack")
 
+erwarte("E17 der repo-leser nimmt auf, was im Fenster mitlaeuft",
+        "Nimm auf, was im Fenster mitläuft" in leser
+        and all(w in leser for w in ("Hooks", "Connectoren", "Mods")),
+        "drei von vier Probenbefunden betrafen die Umgebung, nicht das "
+        "Modellverhalten — im Kundenprojekt kennen wir keine davon")
+erwarte("E17b und meldet auch die leeren Zeilen",
+        "auch wenn sie leer ist" in leser,
+        "'keine Hooks' ist ein Befund, 'nicht nachgesehen' ist keiner")
+
+# ──── E5 · Ein Gate darf nicht ueber NICHTS gruen melden (20.10.) ───────
+# tagesdetail_pruefen.py globte "*.md" im sessions-Ordner. Seit dem Umzug
+# liegen die Blaetter in <TAG>/TAGESBLATT.md — der Glob fand null Dateien
+# und meldete "0 Befunde". Das zweite Mal an einem Tag, dass ein Gate
+# still ueber nichts gelaufen ist (zuvor zehn verify.py-Skripte).
+_tdg = (KIT / "tools/tagesdetail_pruefen.py").read_text(encoding="utf-8")
+
+erwarte("E18 das Tagesdetail-Gate findet die Blaetter im Session-Aufbau",
+        '"*/TAGESBLATT.md"' in _tdg,
+        "sonst laeuft es ueber null Dateien und meldet gruen")
+erwarte("E18b und bricht ab, statt gruen ueber nichts zu melden",
+        "Keine Tagesblaetter unter" in _tdg,
+        "ein leeres Ergebnis ist kein Ergebnis")
+erwarte("E19 das Gate meldet eine veraltete Kopie in der Sitzungsmappe",
+        "TD-G9" in _tdg and "Mappe neu bauen" in _tdg,
+        "die Mappe ist das, was der Trainer in die Hand bekommt — eine "
+        "stille alte Kopie dort ist schlimmer als keine")
+
 # ─────────────── F · Vertraulichkeit der Kundenberichte ──────────────────
 # Eine Regel, die niemand prueft, ist ein Wunsch. Berichte ueber ein Repo
 # in fremder Organisation nennen Rollen statt Namen.
