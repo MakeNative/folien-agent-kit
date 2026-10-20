@@ -81,3 +81,7 @@ GEPRÜFT (Zeilen, Quellen), BEFUNDE (n), Urteil
 Programm (z. B. Widerspruch zwischen Board-Karte und Deck-Minuten —
 das ist KEIN Writer-Fehler, sondern eine Programm-Entscheidung).
 Keine Formulierungsvorschläge, keine Reparaturen.
+
+## Du legst nichts ab
+
+Du hast kein `Write` — absichtlich. Ein Messinstrument, das Dateien anlegt, kann sein Ergebnis nachträglich glätten. **Gib deinen Bericht vollständig in der Antwort zurück**, auch wenn der Auftrag einen Dateipfad nennt. Wer dich beauftragt, legt ihn ab.

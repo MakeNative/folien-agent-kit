@@ -52,7 +52,20 @@ Lücken werden gemeldet, nie gefüllt (TD-01).
    Fixrunde an den Writer, Gate erneut, abnehmen. Widersprüche
    zwischen Board-Karte und Deck/Modul sind Programm-Entscheidungen —
    im Chat melden, nicht still auflösen.
-6. **Ablage + Protokoll.** Prüfberichte nach
+6. **Ablage + Protokoll — das machst DU, nicht der Prüfer.**
+   `board-treue-pruefer` und `trainer-leser` haben **kein `Write`**
+   (Read, Grep, Glob). Das ist Absicht: Ein Messinstrument, das Dateien
+   anlegt, kann sein Ergebnis nachträglich glätten. Sie geben den
+   Bericht als Text zurück, **du** legst ihn ab.
+
+   **Lehre vom 20.10.:** Mein Prompt hat den `trainer-leser`
+   aufgefordert, seinen Bericht selbst zu schreiben. Er hat 479 Sekunden
+   gearbeitet, neun Tage durchgespielt und dann gemeldet, dass `Write`
+   fehlt — der Bericht wäre verloren gewesen, wenn er ihn nicht
+   vollständig in die Antwort gelegt hätte. Formuliere den Auftrag also
+   als „gib mir den Bericht zurück", nicht als „schreib ihn nach".
+
+   Prüfberichte nach
    `praesentationen/pruefberichte/tagesdetails-<welle>-<rolle>.md`
    (dort liegen auch die Asset-Berichte — ein Ort für alle
    Prüfberichte dieses Projekts);

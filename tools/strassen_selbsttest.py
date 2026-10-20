@@ -333,6 +333,32 @@ erwarte("E19 das Gate meldet eine veraltete Kopie in der Sitzungsmappe",
         "die Mappe ist das, was der Trainer in die Hand bekommt — eine "
         "stille alte Kopie dort ist schlimmer als keine")
 
+# ──── E6 · Messinstrumente schreiben nicht (Lehre vom 20.10.) ───────────
+# Der trainer-leser hat 479 s gearbeitet, neun Tage durchgespielt und dann
+# gemeldet, dass Write fehlt. Der Bericht waere verloren gewesen, haette er
+# ihn nicht vollstaendig in die Antwort gelegt. Absicht ist das Fehlen von
+# Write: wer Dateien anlegt, kann sein Ergebnis nachtraeglich glaetten.
+import re as _re
+_schreibfrei = ("board-treue-pruefer", "trainer-leser", "belegkette-pruefer",
+                "publikum-entwickler")
+for _a in _schreibfrei:
+    _d = (KIT / f"agents/{_a}.md")
+    _s = _d.read_text(encoding="utf-8") if _d.exists() else ""
+    _werk = _re.search(r"^tools:\s*(.+)$", _s, _re.M)
+    erwarte(f"E20 {_a} hat kein Write",
+            not _s or (_werk is not None and "Write" not in _werk.group(1)),
+            "ein Messinstrument, das Dateien anlegt, kann sein Ergebnis "
+            "nachtraeglich glaetten")
+for _a in ("board-treue-pruefer", "trainer-leser"):
+    _d = (KIT / f"agents/{_a}.md")
+    _s = " ".join(_d.read_text(encoding="utf-8").split()) if _d.exists() else ""
+    erwarte(f"E20b {_a} sagt selbst, dass er den Bericht zurueckgibt",
+            not _s or "Du legst nichts ab" in _s,
+            "auch wenn der Auftrag einen Dateipfad nennt")
+erwarte("E21 die Tagesdetail-Skill legt die Ablage beim Orchestrator",
+        "das machst DU, nicht der Prüfer" in _tds,
+        "sonst arbeitet ein Pruefer acht Minuten und verliert den Bericht")
+
 # ─────────────── F · Vertraulichkeit der Kundenberichte ──────────────────
 # Eine Regel, die niemand prueft, ist ein Wunsch. Berichte ueber ein Repo
 # in fremder Organisation nennen Rollen statt Namen.
